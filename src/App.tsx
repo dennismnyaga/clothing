@@ -1,9 +1,4 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Link,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Stock from "./pages/Stock";
 import Orders from "./pages/Orders";
@@ -22,7 +17,7 @@ const App = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(fetchCart())
-}, [dispatch])
+  }, [dispatch])
 
 
   return (
