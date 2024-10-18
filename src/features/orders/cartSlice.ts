@@ -80,11 +80,9 @@ export const addDeposit = createAsyncThunk(
       newData: {
         deposit: number
       }
-
     }
   ) => {
     const response = await axios.post(`${apiUrl}/deposit/${cartId}/`, newData)
-    console.log('update data ', response.data)
     return response.data;
   }
 )

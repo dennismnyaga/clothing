@@ -220,7 +220,6 @@ const Home = () => {
 
     setQuantityEditId(variation.id || '');
 
-    console.log('pp ', quantityEditId)
 
     setOpenRecieveProduct(true);
   }
@@ -363,32 +362,47 @@ const Home = () => {
     dispatch(checkProductExists(name)); // Check if the product exists
   };
 
+  let timer;
+  const AddTocartSuccess = () => {
+      setNewProductName(''); // Clear the input field
+      setOpenAddProduct(false)
+      setSuccessMessage('Successfully added the product!')
+      setShowSuccessMessage(true);
+
+      timer = setTimeout(() => {
+        setShowSuccessMessage(false);
+        setSuccessMessage('');
+      }, 3000);
+  }
   const handleAddProduct = () => {
     if (!productExists) {
       // Proceed with adding the new product
       dispatch(addProduct({ name: newProductName })); // Adjust according to your action payload
+      // setOpenAddProduct(false)
+      // setOpenAddProduct(!openAddProduct)
+      AddTocartSuccess()
     } else {
       alert('Product already exists!');
     }
   };
 
-  useEffect(() => {
-    if (addingProductStatus === 'succeeded') {
-      setNewProductName(''); // Clear the input field
-      setOpenAddProduct(!openAddProduct)
-      setSuccessMessage('Successfully added the product!')
-      setShowSuccessMessage(true);
+  // useEffect(() => {
+  //   if (addingProductStatus === 'succeeded') {
+  //     setNewProductName(''); // Clear the input field
+  //     setOpenAddProduct(false)
+  //     setSuccessMessage('Successfully added the product!')
+  //     setShowSuccessMessage(true);
 
-      const timer = setTimeout(() => {
-        setShowSuccessMessage(false);
-        setSuccessMessage('')
-      }, 5000);
+  //     const timer = setTimeout(() => {
+  //       setShowSuccessMessage(false);
+  //       setSuccessMessage('')
+  //     }, 3000);
 
-      // Cleanup the timer when the component unmounts or before re-running the effect
-      return () => clearTimeout(timer);
-    }
+  //     // Cleanup the timer when the component unmounts or before re-running the effect
+  //     return () => clearTimeout(timer);
+  //   }
 
-  }, [addingProductStatus]);
+  // }, [addingProductStatus]);
 
 
   //  handling adding new product logic End
@@ -870,6 +884,7 @@ const Home = () => {
                 <input
                   className='w-full outline-none border border-pink-600 px-2 py-0.5 text-sm font-bold rounded-md focus:shadow-md'
                   type='text'
+                  required
                   value={newProductName}
                   onChange={handleInputChange}
                   placeholder="Enter product name"
@@ -1151,6 +1166,7 @@ const Home = () => {
                           <div className=' flex flex-col mb-2'>
                             <label className=' font-light text-sm'>Customer Name</label>
                             <input
+                            required
                               className='outline-none border border-gray-300 rounded-md px-2 py-1 font-semibold text-sm focus:border-pink-400 shadow'
                               type='text'
                               value={customerName}
@@ -1160,6 +1176,7 @@ const Home = () => {
                           <div className=' flex flex-col mb-2'>
                             <label className=' font-light text-sm'>Phone Number</label>
                             <input
+                            required
                               className='outline-none border border-gray-300 rounded-md px-2 py-1 font-semibold text-sm focus:border-pink-400 shadow'
                               type='text'
                               value={phoneNumber}
@@ -1225,6 +1242,7 @@ const Home = () => {
                           <div className=' flex flex-col mb-2'>
                             <label className=' font-light text-sm'>Quantity</label>
                             <input
+                            required
                               value={quantity}
                               onChange={handleQuantityChange}
                               min='0'
@@ -1295,6 +1313,7 @@ const Home = () => {
                           <div className='border border-green-400 flex items-center gap-2 px-2 mt-2'>
                             <p className=' text-sm'>To be delivered on:</p>
                             <input
+                            required
                               className=' text-sm'
                               type='date'
                               value={deliveryDate}

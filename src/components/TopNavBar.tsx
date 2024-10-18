@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, MagnifyingGlassIcon, EnvelopeIcon, BellIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
-import profile from '../assets/images/20240531_131558.jpg';
+import profile from '../assets/images/user.png';
 
 interface TopNavBarProps {
     isCollapsed: boolean;
