@@ -69,6 +69,25 @@ export const fetchCart = createAsyncThunk("cart/fetchCart", async () => {
 });
 
 
+export const addDeposit = createAsyncThunk(
+  "cart/addNewDeposit",
+  async (
+    {
+      cartId,
+      newData
+    }: {
+      cartId: number
+      newData: {
+        deposit: number
+      }
+
+    }
+  ) => {
+    const response = await axios.post(`${apiUrl}/deposit/${cartId}/`, newData)
+    console.log('update data ', response.data)
+    return response.data;
+  }
+)
 
 export const deliveredSet = createAsyncThunk(
   "delivered/delivered",
@@ -77,14 +96,29 @@ export const deliveredSet = createAsyncThunk(
     delivered
   }: {
     cartId: number
-     delivered: boolean
-    
+    delivered: boolean
+
   }) => {
     const response = await axios.put(`${apiUrl}/updatecart/${cartId}/`, {
-      delivered
+      delivered: true
     })
+
     return response.data
+
   },
+)
+
+export const CancelOrder = createAsyncThunk(
+  "cancel/cancelCart",
+  async ({
+    cartId
+  }: {
+    cartId: number
+  }) => {
+    const response = await axios.delete(`${apiUrl}/cancelorder/${cartId}/`)
+    // return response.data
+    return { message: 'Cart deleted successfully', cartId };
+  }
 )
 
 
@@ -126,6 +160,33 @@ const cartSlice = createSlice({
       })
       .addCase(deliveredSet.rejected, (state, action) => {
         state.status = "failed"
+        state.error = action.error.message
+      })
+      .addCase(addDeposit.pending, (state) => {
+        state.status = 'loading'
+      })
+      .addCase(addDeposit.fulfilled, (state, action) => {
+        state.status = 'succeeded'
+        // state.cart = state.cart.map(cart => 
+        //   cart.id === action.payload.id ? action.payload : cart
+        // );
+
+        state.cart = state.cart.map(order => order.id === action.payload.id ? action.payload : order)
+      })
+      .addCase(addDeposit.rejected, (state, action) => {
+        state.error = action.error.message
+      })
+      .addCase(CancelOrder.pending, (state) => {
+        state.status = 'loading'
+      })
+      .addCase(CancelOrder.fulfilled, (state, action) => {
+        state.status = 'succeeded'
+        const deletedCartId = action.payload.cartId;
+
+        // Filter out the deleted cart item from the cart state
+        state.cart = state.cart.filter(cartItem => cartItem.id !== deletedCartId)
+      })
+      .addCase(CancelOrder.rejected, (state, action) => {
         state.error = action.error.message
       })
   },

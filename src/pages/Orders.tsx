@@ -7,7 +7,7 @@ import LeftNav from '../components/LeftNav';
 import TopNavBar from '../components/TopNavBar';
 import Cards from '../components/Cards';
 import { ArchiveBoxXMarkIcon, CheckIcon, ClipboardDocumentCheckIcon, ClockIcon, DocumentTextIcon, FunnelIcon, MagnifyingGlassIcon, MapPinIcon, PencilIcon, PlusCircleIcon, SquaresPlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { fetchCart, selectAllCart } from '../features/orders/cartSlice';
+import { addDeposit, CancelOrder, deliveredSet, fetchCart, selectAllCart } from '../features/orders/cartSlice';
 import CurrencyFormatter from '../components/CurrencyFormatter';
 import DatesOps from '../components/DatesOps';
 import DatesOnly from '../components/DatesOnly';
@@ -27,9 +27,43 @@ const Orders = () => {
     const [selectedOrderEdit, setSelectedOrderEdit] = useState(null);
     const [isEditPanelOpen, setIsEditPanelOpen] = useState(false);
 
+    const [newDeposit, setNewDeposit] = useState(null);
 
 
 
+
+    const handleDepositChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = parseFloat(e.target.value) || 0; // Convert to number and handle NaN
+        setNewDeposit(value);
+    };
+
+
+    const handleSubmitNewDeposit = (e: any) => {
+        e.preventDefault()
+        const cartId = selectedOrder.id
+        const newData = {
+            deposit: newDeposit
+        }
+        dispatch(addDeposit({ cartId, newData }))
+
+    }
+
+    
+
+    const handleSubmitDelivered = (e: any) => {
+        e.preventDefault()
+        const cartId = selectedOrder.id  
+        
+        dispatch(deliveredSet({ cartId }))
+    }
+
+    const handleCancelOrder = (e: any) => {
+        e.preventDefault()
+        const cartId = selectedOrder.id;
+
+        dispatch(CancelOrder({cartId}))
+        setIsPanelOpen(false)
+    }
 
 
     const handleToggleSidebar = () => {
@@ -40,7 +74,6 @@ const Orders = () => {
 
     const handleOrderClick = (order) => {
         setSelectedOrder(order); // Set the clicked order as selected
-        console.log('order selected ', order)
         setIsPanelOpen(true); // Open the right-side panel
     };
 
@@ -89,6 +122,7 @@ const Orders = () => {
 
         // Update the state with the modified order data
         setSelectedOrderEdit(updatedOrder);
+
     };
 
 
@@ -96,6 +130,16 @@ const Orders = () => {
         dispatch(fetchCart())
     }, [dispatch])
 
+
+    useEffect(() => {
+        if (selectedOrder) {
+            // Find the updated selected order in the cart based on ID
+            const updatedOrder = all_orders.find(order => order.id === selectedOrder.id);
+            if (updatedOrder) {
+                setSelectedOrder(updatedOrder); // Update selected order with the latest data from the store
+            }
+        }
+    }, [all_orders, selectedOrder])
 
     return (
         <div className="flex h-screen">
@@ -202,28 +246,28 @@ const Orders = () => {
                                 {/* <h2 className="text-xl font-bold my-4">{selectedOrder.product} Details</h2> */}
                                 <h2 className="text-xl font-bold my-4">Order Details</h2>
                                 <hr />
-                                <p className=' flex justify-between mt-2 mb-1'>
+                                <p className=' flex justify-between mt-2 mb-1 items-center'>
                                     <span className='font-semibold text-xs'>Customer Name:</span>
                                     <span className=' text-xs text-gray-800 font-normal'>{selectedOrder.customer.name}</span>
                                 </p>
-                                <p className=' flex justify-between mt-2 mb-1'>
+                                <p className=' flex justify-between mt-2 mb-1 items-center'>
                                     <span className='font-semibold text-xs'>Customer Phone:</span>
                                     <span className=' text-xs text-gray-800 font-normal'>+254 {selectedOrder.customer.phone}</span>
                                 </p>
-                                <p className=' flex justify-between mt-2 mb-1'>
-                                    <span className='font-semibold text-xs'>Status:</span>
+                                <p className=' flex justify-between mt-2 mb-1 items-center'>
+                                    <span className='font-semibold text-xs'>Delivered:</span>
                                     <span className=' text-xs text-white rounded-lg font-bold  px-2 py-1 flex items-center gap-1 cursor-pointer'>
                                         {selectedOrder.delivered ? <div className=' bg-green-800 text-white font-bold flex items-center gap-2 px-4 py-1 rounded-lg'>
                                             <CheckIcon className='h-4 w-4' /> Delivered</div> : <div className=' flex text-white font-bold items-center gap-2 bg-red-500 px-4 py-1 rounded-lg'>
                                             <ClockIcon className='h-4 w-4' /> Pending</div>}</span>
                                 </p>
-                                <p className=' flex justify-between mt-2 mb-1'><span className='font-semibold text-xs'>Delivery Date:</span> <span className=' text-xs text-gray-800 font-normal'><DatesOnly dateStr={selectedOrder.due_date} /></span></p>
-                                <p className=' flex justify-between mt-2 mb-1'><span className='font-semibold text-xs'>Delivery to:</span> <span className=' text-xs text-gray-800 font-normal'>{selectedOrder.to_be_delivered_to}</span></p>
-                                <p className=' flex justify-between mt-2 mb-1'><span className='font-semibold text-xs'>Phone number:</span> <span className=' text-xs text-gray-800 font-normal'>+254 {selectedOrder.no_to_be_delivered}</span></p>
-                                <p className=' flex justify-between mt-2 mb-1'><span className='font-semibold text-xs'>Ordered on:</span> <span className=' text-xs text-gray-800 font-normal'><DatesOps dateStr={selectedOrder.date} /></span></p>
+                                <p className=' flex justify-between mt-2 mb-1 items-center'><span className='font-semibold text-xs'>Delivery Date:</span> <span className=' text-xs text-gray-800 font-normal'><DatesOnly dateStr={selectedOrder.due_date} /></span></p>
+                                <p className=' flex justify-between mt-2 mb-1 items-center'><span className='font-semibold text-xs'>Delivery to:</span> <span className=' text-xs text-gray-800 font-normal'>{selectedOrder.to_be_delivered_to}</span></p>
+                                <p className=' flex justify-between mt-2 mb-1 items-center'><span className='font-semibold text-xs'>Phone number:</span> <span className=' text-xs text-gray-800 font-normal'>+254 {selectedOrder.no_to_be_delivered}</span></p>
+                                <p className=' flex justify-between mt-2 mb-1 items-center'><span className='font-semibold text-xs'>Ordered on:</span> <span className=' text-xs text-gray-800 font-normal'><DatesOps dateStr={selectedOrder.date} /></span></p>
 
                                 {selectedOrder.fully_payed ? <div>
-                                    <p className=' flex justify-between mt-2 mb-1 text-green-600'>
+                                    <p className=' flex justify-between mt-2 mb-1 items-center text-green-600'>
                                         <span className='font-semibold text-xs'>Balance:</span>
                                         <span className=' text-xs  font-normal text-green-600'>
                                             cleared
@@ -231,21 +275,23 @@ const Orders = () => {
                                     </p>
                                 </div> :
                                     <div>
-                                        <form className=''>
+                                        <form className='' onSubmit={handleSubmitNewDeposit}>
                                             <label className=' text-sm font-semibold'>Add Deposit</label>
-                                            <div className=' flex gap-3'>
+                                            <div className=' flex gap-3 items-center'>
                                                 <input type='number'
                                                     className='outline-none bg-gray-200 px-1 py-0.5 rounded-md focus:ring-2 focus:ring-pink-500 focus:border-pink-500 '
                                                     min={0}
+                                                    value={newDeposit}
+                                                    onChange={handleDepositChange}
                                                 />
                                                 <button className=' bg-slate-400 px-1 py-0.5 rounded-md text-sm text-white font-bold '>add</button>
                                             </div>
-
                                         </form>
-                                        <p className=' flex justify-between mt-2 mb-1 text-red-600'>
+                                        <p className=' flex justify-between mt-2 mb-1 text-red-600 items-center'>
                                             <span className='font-semibold text-xs'>Balance:</span>
                                             <span className=' text-xs  font-normal text-red-600'>
-                                                <CurrencyFormatter amount={selectedOrder.product.quantity * selectedOrder.product.price - selectedOrder.deposited} currencySymbol='Ksh' asString='true' />
+                                                {console.log('heee ', selectedOrder.deposited)}
+                                                <CurrencyFormatter amount={(selectedOrder.quantity * selectedOrder.product.price) - selectedOrder.deposited} currencySymbol='Ksh' asString='true' />
                                             </span>
                                         </p>
                                     </div>
@@ -297,11 +343,11 @@ const Orders = () => {
                             <p className="text-sm lowercase whitespace-nowrap">Edit order</p>
                             <PencilIcon className="h-4 w-4" />
                         </button>
-                        <button className="border flex-grow flex items-center justify-center w-[48%] px-4 py-2 space-x-2 text-orange-600 rounded-lg">
+                        <button onClick={handleSubmitDelivered} className="border flex-grow flex items-center justify-center w-[48%] px-4 py-2 space-x-2 text-orange-600 rounded-lg">
                             <p className="text-sm lowercase whitespace-nowrap">Complete Order</p>
                             <ArchiveBoxXMarkIcon className="h-4 w-4" />
                         </button>
-                        <button className="border flex-grow flex items-center justify-center w-[48%] px-4 py-2 space-x-2 text-orange-600 rounded-lg">
+                        <button onClick={handleCancelOrder} className="border flex-grow flex items-center justify-center w-[48%] px-4 py-2 space-x-2 text-orange-600 rounded-lg">
                             <p className="text-sm lowercase">Cancel Order</p>
                             <ArchiveBoxXMarkIcon className="h-4 w-4" />
                         </button>

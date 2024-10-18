@@ -29,7 +29,7 @@ const Analytics = () => {
         dispatch(toggleSidebar());
     };
 
-    const getMonthName = (monthNumber: number): string  => {
+    const getMonthName = (monthNumber: number): string => {
         const date = new Date();
         date.setMonth(monthNumber - 1);
         return date.toLocaleString('default', { month: 'long' });
@@ -56,7 +56,7 @@ const Analytics = () => {
     );
 
 
-    
+
 
     const xLabels = analytics.map((item) => getMonthName(item.month)); // Extract month names
     const uData = analytics.map((item) => parseFloat(item.total_sales_amount)); // Extract total sales amounts
@@ -74,7 +74,7 @@ const Analytics = () => {
     const SalesDifference = (lastMSales: number, thisMSales: number): [number, boolean, number] => {
         const sales_diff = thisMSales - lastMSales;
         const percentage_diff = lastMSales !== 0 ? parseFloat(((sales_diff / lastMSales) * 100).toFixed(1)) : 0;
-        
+
         // If the current month's sales are greater than last month's sales, return true and the sales difference
         if (thisMSales > lastMSales) {
             return [sales_diff, true, percentage_diff];
@@ -87,7 +87,7 @@ const Analytics = () => {
     const totalOrders = (thisMOrders: number, lastMOrders: number): [number, boolean, number] => {
         const orders_diff = thisMOrders - lastMOrders;
         const percentage_diff = lastMOrders !== 0 ? parseFloat(((orders_diff / lastMOrders) * 100).toFixed(1)) : 0;
-        
+
         // If the current month's sales are greater than last month's sales, return true and the sales difference
         if (thisMOrders > lastMOrders) {
             return [orders_diff, true, percentage_diff];
@@ -106,7 +106,7 @@ const Analytics = () => {
         parseFloat(thisMonthsOrders)
     );
 
-    
+
 
     return (
         <div className="flex h-screen">
@@ -121,10 +121,10 @@ const Analytics = () => {
                 {/* Main Content */}
                 <div className="p-2 grid grid-cols-2 gap-10">
                     <div className="grid grid-cols-2 gap-4">
-                        <Cards thisMonthsSales = {thisMonthsSales} salesDiff={salesDifference} increased={increased} percentageDifference={percentageDifference} />
-                        <SalesCard thisMonthsOrders = {thisMonthsOrders} ordersDiff={ordersDifference} orderIncreased={Ordersincreased} OrderPercentageDifference={OrderspercentageDifference}/>
-                        <TotalCustomerCard thisMonthsOrders = {thisMonthsOrders} ordersDiff={ordersDifference} orderIncreased={Ordersincreased} OrderPercentageDifference={OrderspercentageDifference}/>
-                        <Cards thisMonthsSales = {thisMonthsSales} salesDiff={salesDifference} increased={increased} percentageDifference={percentageDifference}/>
+                        <Cards thisMonthsSales={thisMonthsSales} salesDiff={salesDifference} increased={increased} percentageDifference={percentageDifference} />
+                        <SalesCard thisMonthsOrders={thisMonthsOrders} ordersDiff={ordersDifference} orderIncreased={Ordersincreased} OrderPercentageDifference={OrderspercentageDifference} />
+                        <TotalCustomerCard thisMonthsOrders={thisMonthsOrders} ordersDiff={ordersDifference} orderIncreased={Ordersincreased} OrderPercentageDifference={OrderspercentageDifference} />
+                        <Cards thisMonthsSales={thisMonthsSales} salesDiff={salesDifference} increased={increased} percentageDifference={percentageDifference} />
                     </div>
                     <div className='bg-white shadow-md shadow-slate-200 rounded-lg  flex justify-center'>
                         <LineChart

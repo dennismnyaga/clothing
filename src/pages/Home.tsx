@@ -84,6 +84,7 @@ const Home = () => {
 
   const [deposit, setDeposit] = useState<number>(0);
   const [deliveryDate, setDeliveryDate] = useState('');
+  const [isFullyPaid, setIsFullyPaid] = useState(true);
 
 
   const handleAddCartSuccess = () => {
@@ -114,6 +115,22 @@ const Home = () => {
     setDeliveryDate(e.target.value);
   };
 
+  const handleSelection = (paymentType) => {
+    setSelectedPayment(paymentType);
+
+    // Set isFullyPaid based on the selected payment type
+    if (paymentType === 'fullyPaid') {
+      setIsFullyPaid(true); // Fully paid
+    } else if (paymentType === 'partialPayment') {
+      setIsFullyPaid(false); // Partial payment
+    }
+
+  };
+
+
+
+
+
   const handleCreateOrder = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -135,7 +152,8 @@ const Home = () => {
       deposited: selectedPayment === 'partialPayment' ? deposit : null,
       balance: selectedPayment === 'partialPayment' ? balance : null,
       delivered: selectedCompleteSale === 'complete' ? true : false,
-      due_date: deliveryDate 
+      due_date: deliveryDate,
+      fully_payed: selectedPayment === 'fullyPaid',
     };
 
     dispatch(addToCart({ orderData }))
@@ -174,17 +192,7 @@ const Home = () => {
     setSelectDelivery(deliveryTo);
   };
 
-  const handleSelection = (paymentType: string) => {
-    setSelectedPayment(paymentType);
-  };
 
-  const handleCompleteSale = (status: string) => {
-    if (status === 'complete') {
-      setSelectedCompleteSale('complete'); // Mark as complete
-    } else {
-      setSelectedCompleteSale(''); // Unmark as complete
-    }
-  };
 
 
 
@@ -349,7 +357,7 @@ const Home = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
 
 
-  const handleInputChange = (e:any) => {
+  const handleInputChange = (e: any) => {
     const name = e.target.value;
     setNewProductName(name);
     dispatch(checkProductExists(name)); // Check if the product exists
@@ -586,6 +594,11 @@ const Home = () => {
   };
   // adding the product pro end
 
+  const handleCompleteSale = (value: string) => {
+    // Check if the current value is 'complete', if so, reset it, otherwise set to 'complete'
+    setSelectedCompleteSale(value);
+  };
+  
   return (
     <div className="flex h-screen">
       {/* Left Sidebar */}
@@ -1266,8 +1279,7 @@ const Home = () => {
                               <p className='font-light text-sm'>Balance: {balance >= 0 ? balance : 0}</p> {/* Ensure balance isn't negative */}
                             </div>
                           )}
-                          <div
-                            // onClick={() => handleCompleteSale('complete')}
+                          <label
                             onClick={() => handleCompleteSale(selectedCompleteSale === 'complete' ? '' : 'complete')}
                             className={`flex items-center gap-2 border px-2 py-1 cursor-pointer ${selectedCompleteSale === 'complete' ? 'border-green-400' : 'border-gray-300'
                               }`}
@@ -1276,22 +1288,25 @@ const Home = () => {
                             <input
                               type='checkbox'
                               checked={selectedCompleteSale === 'complete'}
-                              // onChange={() => handleCompleteSale('complete')}
                               onChange={() => handleCompleteSale(selectedCompleteSale === 'complete' ? '' : 'complete')}
                             />
-                          </div>
-                          <div>
-                            <p>To be delivered on:</p>
+                          </label>
+
+                          <div className='border border-green-400 flex items-center gap-2 px-2 mt-2'>
+                            <p className=' text-sm'>To be delivered on:</p>
                             <input
+                              className=' text-sm'
                               type='date'
                               value={deliveryDate}
                               onChange={handleDeliveryDateChange}
                             />
                           </div>
 
+
                           <div className=' text-center'>
                             <button className=' bg-yellow-800 text-white px-4 py-1 rounded-lg mt-3 lowercase'>Create order</button>
                           </div>
+
 
                         </form>
                       </div>

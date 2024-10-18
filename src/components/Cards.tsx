@@ -47,8 +47,6 @@ const Cards: React.FC<cardsData> = ({ salesDiff, increased, percentageDifference
           <ArrowTrendingDownIcon className='h-4 w-4 text-orange-600' />
         </div>
         }
-
-
         <p className=' text-sm text-gray-400'>from last month</p>
       </div>
     </div>
