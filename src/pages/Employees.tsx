@@ -1,53 +1,173 @@
 // @ts-nocheck
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { toggleSidebar } from '../features/sidebar/sidebarSlice';
 import LeftNav from '../components/LeftNav';
 import TopNavBar from '../components/TopNavBar';
 import { ArchiveBoxXMarkIcon, CheckIcon, ClipboardDocumentCheckIcon, ClockIcon, FunnelIcon, MagnifyingGlassIcon, MapPinIcon, PencilIcon, PlusCircleIcon, SquaresPlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { addEmployee, fetchEmployees, selectAllEmployee } from '../features/employees/employeesSlice';
+import { useNavigate } from 'react-router-dom';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Slide } from '@mui/material';
+import { TransitionProps } from '@mui/material/transitions';
 
 
 
-const ordersData = [
-  { id: 1, product: 'Khaki', quantity: 35, status: 'Delivered', size: 'Large', deliveryDate: '2024-09-30', deliveryPhone: '+254 799740253' },
-  { id: 2, product: 'Denim', quantity: 50, status: 'Pending', size: 'Medium', deliveryDate: '2024-10-02', deliveryPhone: '+254 700200566' }
-];
+const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & {
+        children: React.ReactElement<unknown>;
+    },
+    ref: React.Ref<unknown>,
+) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 
 const Employees = () => {
+    const navigate = useNavigate()
+    const dispatch = useAppDispatch();
+    const all_employees = useAppSelector(selectAllEmployee);
 
-  const [isFilters, setIsFilters] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
+    const [isFilters, setIsFilters] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [isPanelOpen, setIsPanelOpen] = useState(false);
+    const [open, setOpen] = useState(false);
 
-  const dispatch = useAppDispatch();
-  const isCollapsed = useAppSelector((state) => state.sidebar.isCollapsed);
+    const [name, setName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('')
+    const [phone, setPhone] = useState('')
+    const [gender, setGender] = useState('')
+    const [dateEmployed, setDateEmployed] = useState('')
 
-  const handleToggleSidebar = () => {
-    dispatch(toggleSidebar());
-  };
-
-
-  const handleOpenFilters = () => {
-    setIsFilters(!isFilters);
-  };
-
-  const handleOrderClick = (order) => {
-    setSelectedOrder(order); // Set the clicked order as selected
-    setIsPanelOpen(true); // Open the right-side panel
-  };
-
-  const handleClosePanel = () => {
-    setIsPanelOpen(false); // Close the right-side panel
-    setTimeout(() => setSelectedOrder(null), 300); // Delay resetting the order data to match the closing animation
-  };
+    const isCollapsed = useAppSelector((state) => state.sidebar.isCollapsed);
 
 
 
+    const handleClose = () => {
+        setOpen(false);
+      };
 
-  return (
-    <div className="flex h-screen">
+      const handleOpen = () => {
+        setOpen(true)
+      }
+
+    const handleToggleSidebar = () => {
+        dispatch(toggleSidebar());
+    };
+
+
+    const handleOpenFilters = () => {
+        setIsFilters(!isFilters);
+    };
+
+    const handleOrderClick = (order) => {
+        setSelectedOrder(order); // Set the clicked order as selected
+        setIsPanelOpen(true); // Open the right-side panel
+    };
+
+    const handleClosePanel = () => {
+        setIsPanelOpen(false); // Close the right-side panel
+        setTimeout(() => setSelectedOrder(null), 300); // Delay resetting the order data to match the closing animation
+    };
+
+    useEffect(() => {
+        dispatch(fetchEmployees())
+    }, [dispatch])
+
+    // Helper function to calculate the total estimated pay for the current month
+    // const calculateCurrentMonthEstimatedPay = (tasks) => {
+    //     const currentDate = new Date();
+    //     const currentMonth = currentDate.getMonth();
+    //     const currentYear = currentDate.getFullYear();
+
+    //     // Filter tasks for the current month and year
+    //     const currentMonthTasks = tasks.filter((task) => {
+    //         const taskDate = new Date(task.start_date);
+    //         return taskDate.getMonth() === currentMonth && taskDate.getFullYear() === currentYear;
+    //     });
+
+
+    //     // Sum the estimated_pay for the filtered tasks
+    //     const totalEstimatedPay = currentMonthTasks.reduce((sum, task) => {
+    //         return sum + parseFloat(task.estimated_pay);
+    //     }, 0);
+
+    //     return totalEstimatedPay.toFixed(2); // Return formatted total
+    // };
+    const calculateCurrentMonthEstimatedPay = (tasks) => {
+        if (!tasks || tasks.length === 0) {
+            return "0.00"; // Return zero if tasks is undefined or empty
+        }
+
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
+        // Filter tasks for the current month and year
+        const currentMonthTasks = tasks.filter((task) => {
+            const taskDate = new Date(task.start_date);
+            return taskDate.getMonth() === currentMonth && taskDate.getFullYear() === currentYear;
+        });
+
+        // Sum the estimated_pay only for completed tasks in the filtered list
+        const totalEstimatedPay = currentMonthTasks.reduce((sum, task) => {
+            return task.completed ? sum + parseFloat(task.estimated_pay) : sum;
+        }, 0);
+
+        return totalEstimatedPay.toFixed(2); // Return formatted total
+    };
+
+
+
+    // Calculate total advances for the current month
+    const calculateCurrentMonthAdvances = (advances) => {
+        if (!advances || advances.length === 0) {
+            return "0.00"; // Return zero if tasks is undefined or empty
+        }
+
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
+        const currentMonthAdvances = advances.filter((advance) => {
+            const advanceDate = new Date(advance.date_issued);
+            return advanceDate.getMonth() === currentMonth && advanceDate.getFullYear() === currentYear;
+        });
+
+        const totalAdvances = currentMonthAdvances.reduce((sum, advance) => sum + parseFloat(advance.amount), 0);
+        return totalAdvances;
+    };
+
+    const getEmployeeStatus = (tasks) => {
+        if ( !tasks || tasks.length === 0) {
+            return "Idle"; // No tasks at all
+        }
+        const hasIncompleteTasks = tasks.some(task => !task.completed);
+        return hasIncompleteTasks ? "Tasking" : "Idle";
+    };
+
+    const now = new Date();
+    const currentMonth = now.getMonth()
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "Octomber", "November", "December"]
+    console.log('month of ', months[currentMonth])
+
+
+    const handelAddEmployee = () => {
+        const formData = {
+            first_name: name,
+            last_name: lastName,
+            email: email,
+            phone: phone,
+            gender: gender,
+            date_employed: dateEmployed
+        }
+        dispatch(addEmployee(formData))
+    }
+
+
+    return (
+        <div className="flex h-screen">
             {/* Left Sidebar */}
             <LeftNav isCollapsed={isCollapsed} />
 
@@ -57,7 +177,7 @@ const Employees = () => {
                 <TopNavBar isCollapsed={isCollapsed} toggleSidebar={handleToggleSidebar} />
 
                 {/* Main Content */}
-                <div className='mx-8'>
+                <div className='mx-8 max-h-[550px] overflow-y-auto'>
                     {/* Cards Section */}
                     <div className=" flex items-center w-1/2 relative mx-4 mt-4">
                         <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
@@ -67,37 +187,11 @@ const Employees = () => {
                             placeholder="Search employee..."
                             className="border bg-white rounded-xl pl-10 pr-4 py-2 w-full focus:outline-none focus:border-purple-800"
                         />
-                        <div className=' relative'>
-                            <div onClick={handleOpenFilters} className=' border rounded-lg px-2 bg-white cursor-pointer py-2 ms-5 flex items-center gap-2 text-orange-600'>
-                                <FunnelIcon className='h-5 w-5' />
-                                <p className=' font-semibold'>filters</p>
-                            </div>
 
-                            {isFilters && (
-                                <div
-                                    className="bg-gray-100 p-2 ms-5 mt-24 rounded-md absolute z-50"
-                                    style={{ transform: "translateY(-100%)" }}
-                                >
-                                    <p className="border-b text-sm flex mb-2 justify-between px-2 items-center text-orange-500 cursor-pointer hover:bg-orange-100 hover:text-orange-700 transition-colors duration-300">
-                                        All
-                                        <SquaresPlusIcon className="h-4 w-4" />
-                                    </p>
-                                    <p className="border-b text-sm flex mb-2 justify-between px-2 items-center text-orange-500 cursor-pointer hover:bg-orange-100 hover:text-orange-700 transition-colors duration-300">
-                                        Pending
-                                        <ClockIcon className="h-4 w-4" />
-                                    </p>
-                                    <p className="text-sm flex mb-2 justify-between px-2 items-center text-orange-500 cursor-pointer hover:bg-orange-100 hover:text-orange-700 transition-colors duration-300">
-                                        Complete
-                                        <ClipboardDocumentCheckIcon className="h-4 w-4 ms-4" />
-                                    </p>
-                                </div>
-                            )}
-
+                        <div onClick={handleOpen} className=' border rounded-lg px-2 bg-white cursor-pointer py-2 ms-5 flex items-center gap-2 text-orange-600'>
+                            <PlusCircleIcon className='h-5 w-5' />
+                            <p className=' whitespace-nowrap font-semibold'>add Employee</p>
                         </div>
-                        <div  className=' border rounded-lg px-2 bg-white cursor-pointer py-2 ms-5 flex items-center gap-2 text-orange-600'>
-                                <PlusCircleIcon className='h-5 w-5' />
-                                <p className=' whitespace-nowrap font-semibold'>add order</p>
-                            </div>
 
                     </div>
 
@@ -108,23 +202,32 @@ const Employees = () => {
                                 <tr>
                                     <th className="px-6 py-4">Name</th>
                                     <th className="px-6 py-4">Phone</th>
-                                    <th className="px-6 py-4">Task Status</th>
-                                    <th className="px-6 py-4">August Advances</th>
-                                    <th className="px-6 py-4">Delivery Date</th>
-                                    <th className="px-6 py-4">Delivery Phone</th>
+                                    <th className="px-6 py-4">No: Tasks</th>
+                                    <th className="px-6 py-4">{months[currentMonth]} Task Earnings</th>
+                                    <th className="px-6 py-4">Advances</th>
+                                    <th className="px-6 py-4">Total Payment Due</th>
+                                    <th className="px-6 py-4">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="text-sm divide-y divide-gray-200">
-                                {ordersData.map((order) => (
-                                    <tr key={order.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleOrderClick(order)}>
-                                        <td className="px-6 py-4">{order.product}</td>
-                                        <td className="px-6 py-4">{order.quantity}</td>
-                                        <td className="px-6 py-4">{order.status}</td>
-                                        <td className="px-6 py-4">{order.size}</td>
-                                        <td className="px-6 py-4">{order.deliveryDate}</td>
-                                        <td className="px-6 py-4">{order.deliveryPhone}</td>
-                                    </tr>
-                                ))}
+                                {all_employees.map((employee) => {
+                                    const taskEarnings = calculateCurrentMonthEstimatedPay(employee.tasks);
+                                    const totalAdvances = calculateCurrentMonthAdvances(employee.advances);
+                                    const totalPaymentDue = (taskEarnings - totalAdvances).toFixed(2);
+                                    const employeeStatus = getEmployeeStatus(employee.tasks);
+                                    return (
+
+                                        <tr key={employee.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/employee/${employee.id}`)}>
+                                            {/* <tr key={employee.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleOrderClick(employee)}> */}
+                                            <td className="px-6 py-4">{employee.first_name} {employee.last_name}</td>
+                                            <td className="px-6 py-4">+254 {employee.phone} </td>
+                                            <td className="px-6 py-4 text-center">{employee?.tasks?.length}</td>
+                                            <td className="px-6 py-4 text-center">Ksh {taskEarnings}</td>
+                                            <td className="px-6 py-4">Ksh. {totalAdvances}</td>
+                                            <td className="px-6 py-4">Ksh. {totalPaymentDue}</td>
+                                            <td className="px-6 py-4">{employeeStatus}</td>
+                                        </tr>)
+                                })}
                             </tbody>
                         </table>
                     </div>
@@ -192,8 +295,87 @@ const Employees = () => {
 
                 </div>
             </div>
+
+
+            <Dialog
+                open={open}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleClose}
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle>{"Add a new employee "}</DialogTitle>
+                <DialogContent>
+                    <div className=' flex flex-col justify-center'>
+                        <form>
+                            <div className=' mb-2'>
+                                <label className=' text-sm font-semibold lowercase text-gray-400'>First name</label>
+                                <input
+                                    className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
+                                    type='text'
+                                    onChange={(e) => setName(e.target.value)}
+                                />
+                            </div>
+                            <div className=' mb-2'>
+                                <label className=' text-sm font-semibold lowercase text-gray-400'>Last name</label>
+                                <input
+                                    className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
+                                    type='text'
+                                    onChange={(e) => setLastName(e.target.value)}
+                                />
+                            </div>
+                            <div className=' mb-2'>
+                                <label className=' text-sm font-semibold lowercase text-gray-400'>Email</label>
+                                <input
+                                    className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
+                                    type='text'
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                            </div>
+                            <div className=' mb-2'>
+                                <label className=' text-sm font-semibold lowercase text-gray-400'>Phone</label>
+                                <input
+                                    className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
+                                    type='text'
+                                    onChange={(e) => setPhone(e.target.value)}
+                                />
+                            </div>
+                            <div className=' mb-2'>
+                                <label className=' text-sm font-semibold lowercase text-gray-400'>Gender</label>
+                                <select onChange={(e) => setGender(e.target.value)} className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'>
+                                    <option>--Gender--</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                </select>
+                                {/* <input
+                                    className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
+                                    type='text'
+                                    onChange={(e) => setPhone(e.target.value)}
+                                /> */}
+                            </div>
+                            
+                            <div>
+                                <label className=' text-sm font-semibold lowercase text-gray-400'>Date employed</label>
+                                <input
+                                    onChange={(e) => setDateEmployed(e.target.value)}
+                                    className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
+                                    type='date'
+                                />
+                            </div>
+                            
+                            
+                            
+
+                        </form>
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handelAddEmployee}>Create</Button>
+                </DialogActions>
+            </Dialog>
         </div>
-  )
+    )
 }
 
 export default Employees

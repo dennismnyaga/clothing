@@ -9,6 +9,9 @@ import Employees from "./pages/Employees";
 import { useEffect } from "react";
 import { useAppDispatch } from "./app/hooks";
 import { fetchCart } from "./features/orders/cartSlice";
+import Task from "./pages/Task";
+import EmployeeDetails from "./pages/EmployeeDetails";
+import SocialMedia from "./pages/SocialMedia";
 
 
 
@@ -21,6 +24,7 @@ const App = () => {
 
 
   return (
+    <div className=" h-screen">
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -30,8 +34,13 @@ const App = () => {
         <Route path="roles/*" element={<Roles />} />
         <Route path="expenses/*" element={<Expenses />} />
         <Route path="employees/*" element={<Employees />} />
+        <Route path="social/*" element={<SocialMedia />} />
+        <Route path="task/:id" element={<Task />} />
+        <Route path="employee/:employeeId/" element={<EmployeeDetails />} />
+        
       </Routes>
     </BrowserRouter>
+    </div>
   )
 }
 

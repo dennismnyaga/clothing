@@ -33,7 +33,7 @@ const Cards: React.FC<cardsData> = ({ salesDiff, increased, percentageDifference
 
       </div>
       <div>
-        <h4 className=' text-4xl font-roboto'>
+        <h4 className=' text-2xl whitespace-nowrap font-roboto'>
           {CurrencyFormatter({ amount: thisMonthsSales, currencySymbol: 'Ksh', asString: true }) || ''}
         </h4>
       </div>

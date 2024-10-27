@@ -114,12 +114,12 @@ const Analytics = () => {
             <LeftNav isCollapsed={isCollapsed} />
 
             {/* Main Content Area */}
-            <div className="flex-1 bg-gray-100">
+            <div className=" mx-2 flex-1 bg-gray-100">
                 {/* Top Navbar */}
                 <TopNavBar isCollapsed={isCollapsed} toggleSidebar={handleToggleSidebar} />
 
                 {/* Main Content */}
-                <div className="p-2 grid grid-cols-2 gap-10">
+                <div className="p-2 grid grid-cols-2 gap-10 max-h-[550px] overflow-y-auto">
                     <div className="grid grid-cols-2 gap-4">
                         <Cards thisMonthsSales={thisMonthsSales} salesDiff={salesDifference} increased={increased} percentageDifference={percentageDifference} />
                         <SalesCard thisMonthsOrders={thisMonthsOrders} ordersDiff={ordersDifference} orderIncreased={Ordersincreased} OrderPercentageDifference={OrderspercentageDifference} />

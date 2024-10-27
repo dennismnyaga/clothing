@@ -364,15 +364,15 @@ const Home = () => {
 
   let timer;
   const AddTocartSuccess = () => {
-      setNewProductName(''); // Clear the input field
-      setOpenAddProduct(false)
-      setSuccessMessage('Successfully added the product!')
-      setShowSuccessMessage(true);
+    setNewProductName(''); // Clear the input field
+    setOpenAddProduct(false)
+    setSuccessMessage('Successfully added the product!')
+    setShowSuccessMessage(true);
 
-      timer = setTimeout(() => {
-        setShowSuccessMessage(false);
-        setSuccessMessage('');
-      }, 3000);
+    timer = setTimeout(() => {
+      setShowSuccessMessage(false);
+      setSuccessMessage('');
+    }, 3000);
   }
   const handleAddProduct = () => {
     if (!productExists) {
@@ -612,7 +612,7 @@ const Home = () => {
     // Check if the current value is 'complete', if so, reset it, otherwise set to 'complete'
     setSelectedCompleteSale(value);
   };
-  
+
   return (
     <div className="flex h-screen">
       {/* Left Sidebar */}
@@ -624,7 +624,7 @@ const Home = () => {
         <TopNavBar isCollapsed={isCollapsed} toggleSidebar={handleToggleSidebar} />
 
         {/* Main Content */}
-        <div className='mx-8'>
+        <div className='mx-2 max-h-[550px] overflow-y-auto'>
           {/* Cards Section */}
           <div className=" flex items-center w-1/2 relative  mt-4">
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
@@ -636,7 +636,7 @@ const Home = () => {
 
             <div onClick={handleOpenAddProduct} className=' border rounded-lg px-2 bg-white cursor-pointer py-2 ms-5 flex items-center gap-2 text-orange-600'>
               <PlusCircleIcon className='h-5 w-5' />
-              <p className=' whitespace-nowrap font-semibold'>add Product</p>
+              <p className='  font-semibold whitespace-nowrap'>add Product</p>
             </div>
 
 
@@ -654,23 +654,22 @@ const Home = () => {
             <table className='min-w-full text-left text-gray-900 border-collapse divide-y divide-gray-200'>
               <thead className="text-sm font-semibold ">
                 <tr className="text-gray-600 ">
-                  <th className="px-6 py-4">Product</th>
-                  <th className="px-6 py-4">Material</th>
-                  <th className="px-6 py-4">Color</th>
-                  <th className="px-6 py-4">Size</th>
-                  <th className="px-6 py-4">Price</th>
-                  <th className="px-6 py-4">Quantity</th>
-                  <th className="px-6 py-4">Action</th>
+                  <th className="px-3 py-4">Product</th>
+                  <th className="px-3 py-4">Material</th>
+                  <th className="px-3 py-4">Color</th>
+                  <th className="px-3 py-4">Size</th>
+                  <th className="px-3 py-4">Price</th>
+                  <th className="px-3 py-4">Quantity</th>
+                  <th className="px-3 py-4">Action</th>
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-gray-200">
                 {all_products.map((product) => (
-                  // Check if there are variations for the product
                   Array.isArray(product.prod) && product.prod.length > 0 ? (
                     product.prod.map((variation, index) => (
                       <tr key={`${product.name}-${index}`} className="hover:bg-gray-100">
                         {index === 0 && (
-                          <td className="px-6 py-4 font-medium" rowSpan={product.prod.length}>
+                          <td className="px-3 py-4 font-medium align-top" rowSpan={product.prod.length}>
                             <div className='flex flex-col items-center'>
                               {product.name}
                               <div className='flex space-x-3'>
@@ -697,14 +696,14 @@ const Home = () => {
                           </td>
                         )}
                         {/* Ensure that you're rendering string or number values, not objects */}
-                        <td className="px-6 py-4 whitespace-nowrap">{variation.material.name}</td> {/* Accessing material.name */}
-                        <td className="px-6 py-4 whitespace-nowrap">{variation.color.name}</td>    {/* Accessing color.name */}
-                        <td className="px-6 py-4 whitespace-nowrap">{variation.size.size}</td>     {/* Accessing size.size */}
-                        <td className="px-6 py-4  whitespace-nowrap">
+                        <td className="px-3 py-4 ">{variation.material.name}</td> {/* Accessing material.name */}
+                        <td className="px-3 py-4 ">{variation.color.name}</td>    {/* Accessing color.name */}
+                        <td className="px-3 py-4 ">{variation.size.size}</td>     {/* Accessing size.size */}
+                        <td className="px-3 py-4 whitespace-nowrap ">
                           {CurrencyFormatter({ amount: variation.price, currencySymbol: 'Ksh', asString: true }) || ''}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">{variation.quantity}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 py-4 ">{variation.quantity}</td>
+                        <td className="px-3 py-4 ">
                           <div className="flex space-x-3 text-blue-600">
                             <button
                               onClick={() => handleProductClickCart(product, variation)}
@@ -736,13 +735,13 @@ const Home = () => {
                     ))
                   ) : (
                     <tr key={product.name} className="hover:bg-gray-100">
-                      <td className="px-6 py-4 font-medium" colSpan="7">
+                      <td className="px-3 py-4 font-medium" colSpan="7">
                         <div className='flex flex-col items-center'>
                           {product.name}
                           <div className='flex space-x-3'>
                             <button
                               onClick={() => handleProductClick(product)}
-                              className="bg-green-800 px-2 py-0.5 mt-5 rounded-md text-white font-semibold whitespace-nowrap"
+                              className="bg-green-800 px-2 py-0.5 mt-5 rounded-md text-white font-semibold "
                             >
                               Add Product
                             </button>
@@ -1166,7 +1165,7 @@ const Home = () => {
                           <div className=' flex flex-col mb-2'>
                             <label className=' font-light text-sm'>Customer Name</label>
                             <input
-                            required
+                              required
                               className='outline-none border border-gray-300 rounded-md px-2 py-1 font-semibold text-sm focus:border-pink-400 shadow'
                               type='text'
                               value={customerName}
@@ -1176,7 +1175,7 @@ const Home = () => {
                           <div className=' flex flex-col mb-2'>
                             <label className=' font-light text-sm'>Phone Number</label>
                             <input
-                            required
+                              required
                               className='outline-none border border-gray-300 rounded-md px-2 py-1 font-semibold text-sm focus:border-pink-400 shadow'
                               type='text'
                               value={phoneNumber}
@@ -1242,7 +1241,7 @@ const Home = () => {
                           <div className=' flex flex-col mb-2'>
                             <label className=' font-light text-sm'>Quantity</label>
                             <input
-                            required
+                              required
                               value={quantity}
                               onChange={handleQuantityChange}
                               min='0'
@@ -1313,7 +1312,7 @@ const Home = () => {
                           <div className='border border-green-400 flex items-center gap-2 px-2 mt-2'>
                             <p className=' text-sm'>To be delivered on:</p>
                             <input
-                            required
+                              required
                               className=' text-sm'
                               type='date'
                               value={deliveryDate}

@@ -232,7 +232,7 @@ const Stock = () => {
         <TopNavBar isCollapsed={isCollapsed} toggleSidebar={handleToggleSidebar} />
 
         {/* Main Content */}
-        <div className='mx-8'>
+        <div className='mx-8 max-h-[550px] overflow-y-auto'>
 
           <div className=" py-6 flex space-x-4">
 

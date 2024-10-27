@@ -15,7 +15,7 @@ const CurrencyFormatter: React.FC<Curency> = ({ amount, currencySymbol, asString
       }
 
   return (
-    <span>
+    <span className=''>
         {currencySymbol} {formattedAmount}
     </span>
   )

@@ -27,7 +27,7 @@ const Expenses = () => {
         <TopNavBar isCollapsed={isCollapsed} toggleSidebar={handleToggleSidebar} />
 
         {/* Main Content */}
-        <div className="p-6">
+        <div className="p-6 max-h-[550px] overflow-y-auto">
           <h2 className="text-2xl font-semibold mb-4">Main Content Area of expenses</h2>
           <p>This is where your main dashboard content will go.</p>
         </div>
