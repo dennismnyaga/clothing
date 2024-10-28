@@ -12,6 +12,7 @@ import { fetchCart } from "./features/orders/cartSlice";
 import Task from "./pages/Task";
 import EmployeeDetails from "./pages/EmployeeDetails";
 import SocialMedia from "./pages/SocialMedia";
+import OnlineStore from "./pages/OnlineStore";
 
 
 
@@ -37,6 +38,7 @@ const App = () => {
         <Route path="social/*" element={<SocialMedia />} />
         <Route path="task/:id" element={<Task />} />
         <Route path="employee/:employeeId/" element={<EmployeeDetails />} />
+        <Route path="store/" element={<OnlineStore />} />
         
       </Routes>
     </BrowserRouter>

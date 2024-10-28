@@ -83,10 +83,11 @@ export const fetchEmployees = createAsyncThunk("employees/fetchEmployees", async
 
 
 
-export const updateEmployee = createAsyncThunk(
-  "employee/updateEmployee",
+export const updateThisEmployee = createAsyncThunk(
+  "employee/updateThisEmployee",
   async ({ id, updatedData }: { id: number; updatedData: Partial<Employee> }) => {
-    const response = await axios.put(`${apiUrl}/updateEmployee/${id}/`, updatedData); // Assuming you're using PUT to update
+    console.log('Id ', id)
+    const response = await axios.put(`${apiUrl}/updateemployee/${id}/`, updatedData); // Assuming you're using PUT to update
     return response.data;
   }
 );
@@ -100,7 +101,7 @@ export const deleteThisEmployee = createAsyncThunk(
     employeeId: any
   }) => {
 
-    const response = await axios.delete(`${apiUrl}/deleteEmployee/${employeeId}/`)
+    const response = await axios.delete(`${apiUrl}/deleteemployee/${employeeId}/`)
     return response.data
   },
 )
@@ -118,6 +119,26 @@ export const addEmployee = createAsyncThunk(
     return response.data
   }
 )
+
+
+
+
+
+
+export const deleteEmployee = createAsyncThunk(
+  "employee/addEmployee",
+  async (formData
+  ) => {
+    // await new Promise((resolve) => setTimeout(resolve, 5000));
+    const response = await axios.post(`${apiUrl}/createemployee/`,formData)
+    return response.data
+  }
+)
+
+
+
+
+
 
 
 
@@ -142,17 +163,17 @@ const employeesSlice = createSlice({
       .addCase(addEmployee.rejected, (state) => {
         state.addEmployeeError = 'failed'
       })
-      .addCase(updateEmployee.pending, (state) => {
+      .addCase(updateThisEmployee.pending, (state) => {
         state.updateEmployeeStatus = "loading";
       })
-      .addCase(updateEmployee.fulfilled, (state, action: PayloadAction<Employee>) => {
+      .addCase(updateThisEmployee.fulfilled, (state, action: PayloadAction<Employee>) => {
         state.updateEmployeeStatus = "succeeded";
         // Update the specific employee in the array
         state.employee = state.employee.map((employee) =>
           employee.id === action.payload.id ? action.payload : employee
         );
       })
-      .addCase(updateEmployee.rejected, (state, action) => {
+      .addCase(updateThisEmployee.rejected, (state, action) => {
         state.updateEmployeeStatus = "failed";
         state.updateEmployeeError = action.error.message;
       })

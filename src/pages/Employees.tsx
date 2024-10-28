@@ -6,7 +6,7 @@ import { toggleSidebar } from '../features/sidebar/sidebarSlice';
 import LeftNav from '../components/LeftNav';
 import TopNavBar from '../components/TopNavBar';
 import { ArchiveBoxXMarkIcon, CheckIcon, ClipboardDocumentCheckIcon, ClockIcon, FunnelIcon, MagnifyingGlassIcon, MapPinIcon, PencilIcon, PlusCircleIcon, SquaresPlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { addEmployee, fetchEmployees, selectAllEmployee } from '../features/employees/employeesSlice';
+import { addEmployee, deleteThisEmployee, fetchEmployees, selectAllEmployee, updateThisEmployee } from '../features/employees/employeesSlice';
 import { useNavigate } from 'react-router-dom';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Slide } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
@@ -33,24 +33,36 @@ const Employees = () => {
     const [isPanelOpen, setIsPanelOpen] = useState(false);
     const [open, setOpen] = useState(false);
 
+    const [openDelete, setOpenDelete] = useState(false);
+    const [deleteEmployee, setDeleteEmployee] = useState(null);
+
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('')
-    const [phone, setPhone] = useState('')
-    const [gender, setGender] = useState('')
-    const [dateEmployed, setDateEmployed] = useState('')
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [gender, setGender] = useState('');
+    const [dateEmployed, setDateEmployed] = useState('');
+    const [updateEmployee, setUpdateEmployee] = useState(null);
+    const [openUpdate, setOpenUpdate] = useState(false);
 
     const isCollapsed = useAppSelector((state) => state.sidebar.isCollapsed);
 
 
+    const [updateFirstName, setUpdateFirstName] = useState('');
+    const [updateLastName, setUpdateLastName] = useState('');
+    const [updateEmail, setUpdateEmail] = useState('');
+    const [updatePhone, setUpdatePhone] = useState('');
+    const [updateGender, setUpdateGender] = useState('');
+    const [updateDateEmployed, setUpdateDateEmployed] = useState('');
+
 
     const handleClose = () => {
         setOpen(false);
-      };
+    };
 
-      const handleOpen = () => {
+    const handleOpen = () => {
         setOpen(true)
-      }
+    }
 
     const handleToggleSidebar = () => {
         dispatch(toggleSidebar());
@@ -140,7 +152,7 @@ const Employees = () => {
     };
 
     const getEmployeeStatus = (tasks) => {
-        if ( !tasks || tasks.length === 0) {
+        if (!tasks || tasks.length === 0) {
             return "Idle"; // No tasks at all
         }
         const hasIncompleteTasks = tasks.some(task => !task.completed);
@@ -165,7 +177,69 @@ const Employees = () => {
         dispatch(addEmployee(formData))
     }
 
+    const handleClickOpenUpdateEmployee = (employee) => {
+        setUpdateEmployee(employee);
+        setUpdateEmployee(employee);
+        setUpdateFirstName(employee.first_name || '');
+        setUpdateLastName(employee.last_name || '');
+        setUpdateEmail(employee.email || '');
+        setUpdatePhone(employee.phone || '');
+        setUpdateGender(employee.gender || '');
+        setUpdateDateEmployed(employee.date_employed || '');
+        setOpenUpdate(true);
+    }
 
+    const handleClickCloseUpdate = () => {
+        setOpenUpdate(false);
+    }
+
+
+    const handleFirtUpdateInputChange = (e) => setUpdateFirstName(e.target.value);
+    const handleLastUpdateInputChange = (e) => setUpdateLastName(e.target.value);
+    const handleEmailUpdateInputChange = (e) => setUpdateEmail(e.target.value);
+    const handlePhoneUpdateInputChange = (e) => setUpdatePhone(e.target.value);
+    const handleGenderUpdateInputChange = (e) => setUpdateGender(e.target.value);
+    const handleDatesUpdateInputChange = (e) => setUpdateDateEmployed(e.target.value);
+
+    const handleUpdateEmployee = () => {
+        console.log('ids ', updateEmployee.id)
+        const formData = {
+            first_name: updateFirstName,
+            last_name: updateLastName,
+            email: updateEmail,
+            phone: updatePhone,
+            gender: updateGender,
+            date_employed: updateDateEmployed
+        }
+
+        dispatch(updateThisEmployee({ id: updateEmployee.id, updatedData: formData }))
+        setOpenUpdate(false);
+    }
+
+
+    const handleClickOpenDelete = (employeeId) =>{
+        setOpenDelete(true);
+        setDeleteEmployee(employeeId)
+        
+    }
+
+    
+
+    const handleCloseDelete = () =>{
+        setOpenDelete(false);
+    }
+
+    
+    
+    const handleDelete = () =>{
+        // setOpenDelete(false);
+        // console.log('sjd ', deleteEmployee)
+        dispatch(deleteThisEmployee({employeeId:deleteEmployee}))
+        setOpenDelete(false)
+    }
+
+
+    
     return (
         <div className="flex h-screen">
             {/* Left Sidebar */}
@@ -200,13 +274,15 @@ const Employees = () => {
                         <table className='min-w-full text-left text-gray-900 border-collapse divide-y divide-gray-200'>
                             <thead className="text-sm font-semibold text-gray-600">
                                 <tr>
-                                    <th className="px-6 py-4">Name</th>
-                                    <th className="px-6 py-4">Phone</th>
-                                    <th className="px-6 py-4">No: Tasks</th>
-                                    <th className="px-6 py-4">{months[currentMonth]} Task Earnings</th>
-                                    <th className="px-6 py-4">Advances</th>
-                                    <th className="px-6 py-4">Total Payment Due</th>
-                                    <th className="px-6 py-4">Status</th>
+                                    <th className="px-4 py-4">Name</th>
+                                    <th className="px-4 py-4">Phone</th>
+                                    <th className="px-4 py-4">No: Tasks</th>
+                                    <th className="px-4 py-4">{months[currentMonth]} Task Earnings</th>
+                                    <th className="px-4 py-4">Advances</th>
+                                    <th className="px-4 py-4">Total Payment Due</th>
+                                    <th className="px-4 py-4">Actions</th>
+
+                                    <th className="px-4 py-4">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="text-sm divide-y divide-gray-200">
@@ -217,15 +293,37 @@ const Employees = () => {
                                     const employeeStatus = getEmployeeStatus(employee.tasks);
                                     return (
 
-                                        <tr key={employee.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/employee/${employee.id}`)}>
+                                        <tr key={employee.id} className="hover:bg-gray-50 cursor-pointer" >
                                             {/* <tr key={employee.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleOrderClick(employee)}> */}
-                                            <td className="px-6 py-4">{employee.first_name} {employee.last_name}</td>
-                                            <td className="px-6 py-4">+254 {employee.phone} </td>
-                                            <td className="px-6 py-4 text-center">{employee?.tasks?.length}</td>
-                                            <td className="px-6 py-4 text-center">Ksh {taskEarnings}</td>
-                                            <td className="px-6 py-4">Ksh. {totalAdvances}</td>
-                                            <td className="px-6 py-4">Ksh. {totalPaymentDue}</td>
-                                            <td className="px-6 py-4">{employeeStatus}</td>
+                                            <td className="px-4 py-4 whitespace-nowrap">{employee.first_name} {employee.last_name}</td>
+                                            <td className="px-4 py-4 whitespace-nowrap">+254 {employee.phone} </td>
+                                            <td className="px-4 py-4 text-center">{employee?.tasks?.length}</td>
+                                            <td className="px-4 py-4 text-center">Ksh {taskEarnings}</td>
+                                            <td className="px-4 py-4">Ksh. {totalAdvances}</td>
+                                            <td className="px-4 py-4">Ksh. {totalPaymentDue}</td>
+                                            <td className="px-4 py-4 text-center">
+                                                <div className=' flex space-x-1'>
+                                                    <button
+                                                        onClick={() => handleClickOpenUpdateEmployee(employee)}
+                                                        className="bg-blue-800 px-2 py-0.5 mt-5 rounded-md text-white font-semibold"
+                                                    >
+                                                        Update
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleClickOpenDelete(employee.id)}
+                                                        className="bg-red-400 px-2 py-0.5 mt-5 rounded-md text-white font-semibold"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                    <button
+                                                        onClick={() => navigate(`/employee/${employee.id}`)}
+                                                        className="bg-blue-400 px-2 py-0.5 mt-5 rounded-md text-white font-semibold"
+                                                    >
+                                                        View
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-4">{employeeStatus}</td>
                                         </tr>)
                                 })}
                             </tbody>
@@ -353,7 +451,7 @@ const Employees = () => {
                                     onChange={(e) => setPhone(e.target.value)}
                                 /> */}
                             </div>
-                            
+
                             <div>
                                 <label className=' text-sm font-semibold lowercase text-gray-400'>Date employed</label>
                                 <input
@@ -362,9 +460,9 @@ const Employees = () => {
                                     type='date'
                                 />
                             </div>
-                            
-                            
-                            
+
+
+
 
                         </form>
                     </div>
@@ -374,6 +472,91 @@ const Employees = () => {
                     <Button onClick={handelAddEmployee}>Create</Button>
                 </DialogActions>
             </Dialog>
+
+
+            <Dialog
+                open={openUpdate}
+                onClose={handleClickCloseUpdate}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {`Update  ${updateEmployee?.first_name}`}
+                </DialogTitle>
+                <DialogContent>
+                    <div>
+                        <label>First Name</label>
+                        <input className=' outline-none w-full border border-pink-600 px-2 py-0.5 text-sm font-bold rounded-md focus:shadow-md' type='text' onChange={handleFirtUpdateInputChange} value={updateFirstName} />
+                    </div>
+                    <div>
+                        <label>Last Name</label>
+                        <input className=' outline-none w-full border border-pink-600 px-2 py-0.5 text-sm font-bold rounded-md focus:shadow-md' type='text' onChange={handleLastUpdateInputChange} value={updateLastName} />
+                    </div>
+                    <div>
+                        <label>Email</label>
+                        <input className=' outline-none w-full border border-pink-600 px-2 py-0.5 text-sm font-bold rounded-md focus:shadow-md' type='text' onChange={handleEmailUpdateInputChange} value={updateEmail} />
+                    </div>
+                    <div>
+                        <label>Phone</label>
+                        <input className=' outline-none w-full border border-pink-600 px-2 py-0.5 text-sm font-bold rounded-md focus:shadow-md' type='text' onChange={handlePhoneUpdateInputChange} value={updatePhone} />
+                    </div>
+                    <div>
+                        <label>Gender</label>
+                        <input className=' outline-none w-full border border-pink-600 px-2 py-0.5 text-sm font-bold rounded-md focus:shadow-md' type='text' onChange={handleGenderUpdateInputChange} value={updateGender} />
+
+                    </div>
+                    <div>
+                        <label>Date employed</label>
+                        <input className=' outline-none w-full border border-pink-600 px-2 py-0.5 text-sm font-bold rounded-md focus:shadow-md' type='date' onChange={handleDatesUpdateInputChange} value={updateDateEmployed} />
+
+                    </div>
+                </DialogContent>
+                <DialogActions className=' flex gap-2'>
+                    <button className=' rounded-md bg-green-50 hover:bg-green-300 px-2 py-0.5' onClick={handleClickCloseUpdate}>Cancel</button>
+                    <button onClick={handleUpdateEmployee} className=' rounded-md bg-blue-50 hover:bg-blue-300 px-2 py-0.5'>
+                        Update
+                    </button>
+                    {/* {updateProductStatus === 'loading' ? (
+                        <>
+                            <button className=' rounded-md bg-green-50 hover:bg-green-300 px-2 py-0.5 cursor-not-allowed' >Cancel</button>
+                            <button className='  rounded-md bg-blue-50 hover:bg-blue-300 px-2 py-0.5'>
+                                <CircularProgress className='!w-5 !h-5' />
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button className=' rounded-md bg-green-50 hover:bg-green-300 px-2 py-0.5' onClick={handleClickCloseUpdateProduct}>Cancel</button>
+                            <button onClick={handleUpdateProduct} className=' rounded-md bg-blue-50 hover:bg-blue-300 px-2 py-0.5'>
+                                Update
+                            </button>
+                        </>
+                    )} */}
+
+                </DialogActions>
+            </Dialog>
+
+
+
+            <Dialog
+              open={openDelete}
+              onClose={handleCloseDelete}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {`Delete`}
+              </DialogTitle>
+              <DialogContent className=' '>
+                <p>Delete permanently</p>
+              </DialogContent>
+              <DialogActions className=' flex gap-2'>
+                <button className=' rounded-md bg-green-50 hover:bg-green-300 px-2 py-0.5' onClick={handleCloseDelete}>Cancel</button>
+                <button onClick={handleDelete} className=' rounded-md bg-blue-50 hover:bg-blue-300 px-2 py-0.5'>
+                  Delete
+                </button>
+              </DialogActions>
+            </Dialog>
+
         </div>
     )
 }

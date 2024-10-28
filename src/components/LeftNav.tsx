@@ -93,6 +93,17 @@ const LeftNav: React.FC<LeftNavProps> = ({ isCollapsed }) => {
                 </li>
                 <li className=''>
                     <NavLink
+                        to="/store"
+                        className={({ isActive }) => 
+                            `flex items-center px-4 py-2 ${isActive ? 'bg-red-100 text-amber-700' : ''}`
+                        }
+                    >
+                        <BuildingStorefrontIcon className="h-6 w-6" />
+                        {!isCollapsed && <span className={`ml-4`}>Online Store</span>}
+                    </NavLink>
+                </li>
+                <li className=''>
+                    <NavLink
                         to="/social"
                         className={({ isActive }) => 
                             `flex items-center px-4 py-2 ${isActive ? 'bg-red-100 text-amber-700' : ''}`
