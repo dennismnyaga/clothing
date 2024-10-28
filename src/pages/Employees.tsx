@@ -162,7 +162,6 @@ const Employees = () => {
     const now = new Date();
     const currentMonth = now.getMonth()
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "Octomber", "November", "December"]
-    console.log('month of ', months[currentMonth])
 
 
     const handelAddEmployee = () => {
@@ -175,6 +174,7 @@ const Employees = () => {
             date_employed: dateEmployed
         }
         dispatch(addEmployee(formData))
+        setOpen(false)
     }
 
     const handleClickOpenUpdateEmployee = (employee) => {
