@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
+// @ts-nocheck
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import getApiUrl from "../../../getApiUrl";
+// import Advances
 
 // Define interfaces
 interface Advances {
@@ -150,10 +152,25 @@ export const deleteThisEmployee = createAsyncThunk<void, { employeeId: number }>
 );
 
 // Slice
-const employeesSlice = createSlice({
+const singleEmployeeSlice = createSlice({
   name: "singleEmployee",
   initialState,
-  reducers: {},
+  reducers: {
+    updateSingleEmployeeAdvance(state, action: PayloadAction<Advance>) {
+      if (state.singleEmployee) {
+        state.singleEmployee.advances = state.singleEmployee.advances.map((advance) =>
+          advance.id === action.payload.id ? action.payload : advance
+        );
+      }
+    },
+    removeSingleEmployeeAdvance(state, action: PayloadAction<number>) {
+      if (state.singleEmployee) {
+        state.singleEmployee.advances = state.singleEmployee.advances.filter(
+          (advance) => advance.id !== action.payload
+        );
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(updateEmployee.pending, (state) => {
@@ -209,7 +226,9 @@ const employeesSlice = createSlice({
       })
       .addCase(AddAnAdvance.fulfilled, (state, action: PayloadAction<Advances>) => {
         state.addAnAdvanceStatus = 'succeeded';
+        
         if (state.singleEmployee && state.singleEmployee.advances) {
+          
           state.singleEmployee.advances = [...state.singleEmployee.advances, action.payload];
         }
       })
@@ -224,4 +243,8 @@ export const selectSingleEmployee = (state: { singleEmployee: EmployeeState }) =
 export const getEmployeesStatus = (state: { singleEmployee: EmployeeState }) => state.singleEmployee.status;
 export const getEmployeesError = (state: { singleEmployee: EmployeeState }) => state.singleEmployee.error;
 
-export default employeesSlice.reducer;
+
+export const { updateSingleEmployeeAdvance, removeSingleEmployeeAdvance  } = singleEmployeeSlice.actions;
+// export const { removeSingleEmployeeAdvance } = singleEmployeeSlice.actions;
+
+export default singleEmployeeSlice.reducer;

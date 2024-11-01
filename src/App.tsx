@@ -13,6 +13,7 @@ import Task from "./pages/Task";
 import EmployeeDetails from "./pages/EmployeeDetails";
 import SocialMedia from "./pages/SocialMedia";
 import OnlineStore from "./pages/OnlineStore";
+import Customers from "./pages/Customers";
 
 
 
@@ -39,6 +40,7 @@ const App = () => {
         <Route path="task/:id" element={<Task />} />
         <Route path="employee/:employeeId/" element={<EmployeeDetails />} />
         <Route path="store/" element={<OnlineStore />} />
+        <Route path="customers/" element={<Customers />} />
         
       </Routes>
     </BrowserRouter>

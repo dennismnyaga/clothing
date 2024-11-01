@@ -1,7 +1,10 @@
 /* eslint-disable prettier/prettier */
+// @ts-nocheck
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import getApiUrl from "../../../getApiUrl"
+import { useAppDispatch } from "../../app/hooks";
+import { removeSingleEmployeeAdvance, updateSingleEmployeeAdvance } from "../employees/singleEmployeeSlice"; 
 
 
 
@@ -62,7 +65,6 @@ const initialState: AdvancesState = {
 
 
 
-
 export const fetchAdvances = createAsyncThunk("advances/fetchAdvances", async () => {
   const response = await axios.get<Advance[]>(`${apiUrl}/advances/`);
   return response.data;
@@ -74,9 +76,11 @@ export const fetchAdvances = createAsyncThunk("advances/fetchAdvances", async ()
 
 export const updateAdvances = createAsyncThunk(
   "advance/updateAdvances",
-  async ({ id, updatedData }: { id: number; updatedData: Partial<Advance> }) => {
+  async ({ id, updatedData }: { id: number; updatedData: Partial<Advance> }, {dispatch}) => {
     const response = await axios.put(`${apiUrl}/updateAdvances/${id}/`, updatedData); // Assuming you're using PUT to update
-    return response.data;
+    const updatedAdvance = response.data
+    dispatch(updateSingleEmployeeAdvance(updatedAdvance));
+    return updatedAdvance;
   }
 );
 
@@ -87,10 +91,12 @@ export const deleteAdvance = createAsyncThunk(
     advanceId
   }: {
     advanceId: any
-  }) => {
+  }, {dispatch}) => {
+console.log()
+    await axios.delete(`${apiUrl}/deleteadvance/${advanceId}/`)
 
-    const response = await axios.delete(`${apiUrl}/deleteEmployee/${advanceId}/`)
-    return response.data
+    dispatch(removeSingleEmployeeAdvance(advanceId));
+    return advanceId
   },
 )
 
@@ -135,10 +141,17 @@ const advancesSlice = createSlice({
       })
       .addCase(updateAdvances.fulfilled, (state, action: PayloadAction<Advance>) => {
         state.updateAdvanceStatus = "succeeded";
+        console.log('SHould run here also!')
+
         // Update the specific Advance in the array
-        state.advance = state.advance.map((advance) =>
-          advance.id === action.payload.id ? action.payload : advance
-        );
+        // state.advance = state.advance.map((advance) =>
+        //   advance.id === action.payload.id ? action.payload : advance
+        // );
+        if (state.singleEmployee) {
+          state.singleEmployee.advances = state.singleEmployee.advances.map((advance) =>
+              advance.id === action.payload.id ? action.payload : advance
+          );
+      }
       })
       .addCase(updateAdvances.rejected, (state, action) => {
         state.updateAdvanceStatus = "failed";

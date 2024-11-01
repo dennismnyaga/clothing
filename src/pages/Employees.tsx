@@ -37,6 +37,7 @@ const Employees = () => {
     const [deleteEmployee, setDeleteEmployee] = useState(null);
 
     const [name, setName] = useState('');
+    const [idNumber, setIdNumber] = useState(null);
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -49,6 +50,7 @@ const Employees = () => {
 
 
     const [updateFirstName, setUpdateFirstName] = useState('');
+    const [updateIdNumber, setUpdateIdNumber] = useState(null);
     const [updateLastName, setUpdateLastName] = useState('');
     const [updateEmail, setUpdateEmail] = useState('');
     const [updatePhone, setUpdatePhone] = useState('');
@@ -166,6 +168,7 @@ const Employees = () => {
 
     const handelAddEmployee = () => {
         const formData = {
+            id_number: idNumber,
             first_name: name,
             last_name: lastName,
             email: email,
@@ -173,6 +176,7 @@ const Employees = () => {
             gender: gender,
             date_employed: dateEmployed
         }
+        console.log('DD ', formData)
         dispatch(addEmployee(formData))
         setOpen(false)
     }
@@ -180,6 +184,7 @@ const Employees = () => {
     const handleClickOpenUpdateEmployee = (employee) => {
         setUpdateEmployee(employee);
         setUpdateEmployee(employee);
+        setUpdateIdNumber(employee.id_number || 0);
         setUpdateFirstName(employee.first_name || '');
         setUpdateLastName(employee.last_name || '');
         setUpdateEmail(employee.email || '');
@@ -194,6 +199,7 @@ const Employees = () => {
     }
 
 
+    const handleIdUpdateInputChange = (e) => setUpdateIdNumber(e.target.value);
     const handleFirtUpdateInputChange = (e) => setUpdateFirstName(e.target.value);
     const handleLastUpdateInputChange = (e) => setUpdateLastName(e.target.value);
     const handleEmailUpdateInputChange = (e) => setUpdateEmail(e.target.value);
@@ -202,8 +208,8 @@ const Employees = () => {
     const handleDatesUpdateInputChange = (e) => setUpdateDateEmployed(e.target.value);
 
     const handleUpdateEmployee = () => {
-        console.log('ids ', updateEmployee.id)
         const formData = {
+            id_number: updateIdNumber,
             first_name: updateFirstName,
             last_name: updateLastName,
             email: updateEmail,
@@ -274,6 +280,7 @@ const Employees = () => {
                         <table className='min-w-full text-left text-gray-900 border-collapse divide-y divide-gray-200'>
                             <thead className="text-sm font-semibold text-gray-600">
                                 <tr>
+                                    <th className="px-4 py-4">ID No:</th>
                                     <th className="px-4 py-4">Name</th>
                                     <th className="px-4 py-4">Phone</th>
                                     <th className="px-4 py-4">No: Tasks</th>
@@ -295,6 +302,7 @@ const Employees = () => {
 
                                         <tr key={employee.id} className="hover:bg-gray-50 cursor-pointer" >
                                             {/* <tr key={employee.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleOrderClick(employee)}> */}
+                                            <td className="px-4 py-4 whitespace-nowrap">{employee.id_number}</td>
                                             <td className="px-4 py-4 whitespace-nowrap">{employee.first_name} {employee.last_name}</td>
                                             <td className="px-4 py-4 whitespace-nowrap">+254 {employee.phone} </td>
                                             <td className="px-4 py-4 text-center">{employee?.tasks?.length}</td>
@@ -407,6 +415,14 @@ const Employees = () => {
                     <div className=' flex flex-col justify-center'>
                         <form>
                             <div className=' mb-2'>
+                                <label className=' text-sm font-semibold lowercase text-gray-400'>ID Number</label>
+                                <input
+                                    className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
+                                    type='number'
+                                    onChange={(e) => setIdNumber(e.target.value)}
+                                />
+                            </div>
+                            <div className=' mb-2'>
                                 <label className=' text-sm font-semibold lowercase text-gray-400'>First name</label>
                                 <input
                                     className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
@@ -469,7 +485,7 @@ const Employees = () => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handelAddEmployee}>Create</Button>
+                    <Button onClick={handelAddEmployee}>Add</Button>
                 </DialogActions>
             </Dialog>
 
@@ -484,6 +500,10 @@ const Employees = () => {
                     {`Update  ${updateEmployee?.first_name}`}
                 </DialogTitle>
                 <DialogContent>
+                    <div>
+                        <label>ID Number</label>
+                        <input className=' outline-none w-full border border-pink-600 px-2 py-0.5 text-sm font-bold rounded-md focus:shadow-md' type='number' onChange={handleIdUpdateInputChange} value={updateIdNumber} />
+                    </div>
                     <div>
                         <label>First Name</label>
                         <input className=' outline-none w-full border border-pink-600 px-2 py-0.5 text-sm font-bold rounded-md focus:shadow-md' type='text' onChange={handleFirtUpdateInputChange} value={updateFirstName} />

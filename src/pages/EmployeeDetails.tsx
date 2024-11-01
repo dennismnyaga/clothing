@@ -10,9 +10,10 @@ import { toggleSidebar } from '../features/sidebar/sidebarSlice';
 import DatesOps from '../components/DatesOps';
 import DatesOnly from '../components/DatesOnly';
 import whatsapp from '../assets/images/whatsapp-svgrepo-com.svg'
-import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Slide } from '@mui/material';
+import { PencilSquareIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
+import { deleteAdvance, updateAdvances } from '../features/advances/advancesSlice';
 
 
 
@@ -36,8 +37,69 @@ const EmployeeDetails = () => {
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [open, setOpen] = useState(false);
     const [amount, setAmount] = useState(null);
-    const [dates, setDates] = useState('')
+    const [dates, setDates] = useState('');
+    const [updateThisAdvance, setUpdateThisAdvance] = useState(null);
 
+    const [updateAmount, setUpdateAmount] = useState(0);
+    const [updateDates, setUpdateDates] = useState('');
+    const [advanceId, setAdvanceId] = useState(0);
+
+    const [openDeleteAdvance, setOpenDeleteAdvance] = useState(false);
+
+
+
+
+    const [openEditAdvance, setOpenEditAdvance] = useState(false);
+
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const formattedDate = date.toISOString().slice(0, 16);  // Extracts `yyyy-MM-ddThh:mm`
+        return formattedDate;
+    };
+
+
+    const handleOpenEditAdvance = (advance) => {
+        setAdvanceId(advance.id);
+        setUpdateAmount(advance.amount || 0);
+        setUpdateDates(advance.date_issued ? formatDate(advance.date_issued) : '');
+
+        setOpenEditAdvance(true);
+    }
+
+
+    const handleCloseEditAdvance = () => {
+        setOpenEditAdvance(false);
+    }
+
+    const handleOpenDeleteDialogue = (advance) => {
+        setAdvanceId(advance.id)
+        setOpenDeleteAdvance(true)
+    }
+
+    const handleCloseDeleteDialogue = () => {
+        setOpenDeleteAdvance(false);
+    }
+
+    const handleDeleteAdvance = (advance) => {
+        dispatch(deleteAdvance({advanceId}))
+        setOpenDeleteAdvance(false)
+    }
+
+    const handleEditAdvance = () => {
+        // Perform save operation here (e.g., API call to save updates)
+
+        const updatedData = {
+            ...updateThisAdvance,
+            amount: updateAmount,
+            date_issued: updateDates,
+
+        };
+        console.log("Updated Advance:", updatedData);
+        dispatch(updateAdvances({ id: advanceId, updatedData }))
+        // Close the dialog after updating
+        handleCloseEditAdvance();
+    };
 
 
     const handelAddAdvance = () => {
@@ -48,13 +110,14 @@ const EmployeeDetails = () => {
         }
 
         dispatch(AddAnAdvance(formData))
+        setOpen(false)
     }
 
-    
-    
-      const handleClose = () => {
+
+
+    const handleClose = () => {
         setOpen(false);
-      };
+    };
 
     const handleOpenAddEmployee = () => {
         setOpen(true)
@@ -113,6 +176,10 @@ const EmployeeDetails = () => {
         dispatch(changeTaskCompletionStatus({ taskId, completed: updatedStatus }));
     }
 
+
+
+
+
     return (
         <div className='flex h-screen'>
             <LeftNav isCollapsed={isCollapsed} />
@@ -121,6 +188,8 @@ const EmployeeDetails = () => {
 
                 <div className="p-6 space-y-2 max-h-[550px] overflow-y-auto">
                     <div className=' bg-white p-3 rounded-sm flex justify-evenly'>
+                        <h4 className=' font-bold text-sm'>Id Number: <span className=' font-semibold text-gray-800'>{single_employee?.id_number}</span></h4>
+
                         <div className=' flex flex-col space-y-3'>
                             <h4 className=' font-bold text-sm'>Name: <span className=' font-semibold text-gray-800'>{single_employee?.first_name} {single_employee?.last_name}</span></h4>
                             <h4 className=' font-bold text-sm'>Phone: <span className=' font-semibold text-gray-800'>+254 {single_employee?.phone}</span></h4>
@@ -189,10 +258,22 @@ const EmployeeDetails = () => {
                                 </div>
                                 {filteredAdvances?.length > 0 ? (
                                     <div className="space-y-4">
-                                        {filteredAdvances?.slice().sort((a,b)=> new Date(b.date_given) - new Date(a.date_given)).map((advance) => (
-                                            <div key={advance.id} className="p-4 border border-gray-400 rounded-lg bg-gray-50">
-                                                <p><span className="font-semibold text-sm">Amount:</span> Ksh {advance.amount}</p>
-                                                <p><span className="font-semibold text-sm">Date Issued:</span> {new Date(advance.date_issued).toLocaleString()}</p>
+                                        {filteredAdvances?.slice().sort((a, b) => new Date(b.date_given) - new Date(a.date_given)).map((advance) => (
+                                            <div key={advance.id} className="p-4 border border-gray-400 rounded-lg bg-gray-50 flex justify-between items-center">
+                                                <div>
+                                                    <p><span className="font-semibold text-sm">Amount:</span> Ksh {advance.amount}</p>
+                                                    <p><span className="font-semibold text-sm">Date Issued:</span> <DatesOps dateStr={advance.date_issued} /></p>
+                                                </div>
+
+                                                <div className=' flex flex-col space-y-1'>
+                                                    <div onClick={() => handleOpenEditAdvance(advance)} className=' bg-blue-400 flex items-center cursor-pointer justify-center p-1 rounded-full'>
+                                                        <PencilSquareIcon className=' h-5 w-5 text-white' />
+                                                    </div>
+                                                    <div onClick={() => handleOpenDeleteDialogue(advance)} className=' bg-blue-400 flex items-center cursor-pointer text-red-700 justify-center p-1 rounded-full'>
+                                                        <TrashIcon className=' h-5 w-5' />
+                                                    </div>
+
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -207,7 +288,7 @@ const EmployeeDetails = () => {
                             <h2 className="text-base font-bold text-gray-700 mb-4">Tasks for {months[selectedMonth]} {selectedYear}</h2>
                             {filteredTasks?.length > 0 ? (
                                 <div className="space-y-4">
-                                    {filteredTasks?.slice().sort((a,b) => new Date(b.date_created) - new Date(a.date_created)).map((task) => (
+                                    {filteredTasks?.slice().sort((a, b) => new Date(b.date_created) - new Date(a.date_created)).map((task) => (
                                         <div key={task.id} className="p-4 border rounded-lg bg-gray-50">
                                             <p><span className="font-semibold text-sm">Task Name:</span> {task?.task_name}</p>
                                             <p><span className="font-semibold text-sm">Estimated Pay:</span> Ksh {task?.estimated_pay}</p>
@@ -215,6 +296,9 @@ const EmployeeDetails = () => {
                                             <p><span className="font-semibold text-sm">Start Date:</span> <DatesOps dateStr={task?.start_date} /></p>
                                             <p><span className="font-semibold text-sm">Due Date:</span> <DatesOps dateStr={task?.due_date_time} /></p>
                                             <p><span className="font-semibold text-sm">Completed:</span> {task?.completed ? "Yes" : "No"}</p>
+                                            <div>
+                                                <PencilSquareIcon className=' h-5 w-5' />
+                                            </div>
                                             <form className=' flex items-center space-x-2'>
                                                 <label>Mark as complete</label>
                                                 <input type='checkbox' checked={task?.completed}
@@ -237,7 +321,7 @@ const EmployeeDetails = () => {
             </div>
 
 
-            {/* add employee dialogue */}
+            {/* add advance dialogue */}
             <Dialog
                 open={open}
                 TransitionComponent={Transition}
@@ -245,7 +329,7 @@ const EmployeeDetails = () => {
                 onClose={handleClose}
                 aria-describedby="alert-dialog-slide-description"
             >
-                <DialogTitle>{"Add a new "}</DialogTitle>
+                <DialogTitle>{"Add a new advance"}</DialogTitle>
                 <DialogContent>
                     <div className=' flex flex-col justify-center'>
                         <form>
@@ -258,7 +342,7 @@ const EmployeeDetails = () => {
                                     onChange={(e) => setAmount(e.target.value)}
                                 />
                             </div>
-                            
+
                             <div>
                                 <label className=' text-sm font-semibold lowercase text-gray-400'>Date time given</label>
                                 <input
@@ -267,9 +351,9 @@ const EmployeeDetails = () => {
                                     type='datetime-local'
                                 />
                             </div>
-                            
-                            
-                            
+
+
+
 
                         </form>
                     </div>
@@ -279,6 +363,75 @@ const EmployeeDetails = () => {
                     <Button onClick={handelAddAdvance}>Create</Button>
                 </DialogActions>
             </Dialog>
+
+
+            {/* update advance */}
+            <Dialog
+                open={openEditAdvance}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleCloseEditAdvance}
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle>{"update the Advance"}</DialogTitle>
+                <DialogContent>
+                    <div className=' flex flex-col justify-center'>
+                        <form>
+                            <div className=' mb-2'>
+                                <label className=' text-sm font-semibold lowercase text-gray-400'>Advance amount</label>
+                                <input
+                                    value={updateAmount}
+                                    className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
+                                    type='number'
+                                    min={0}
+                                    // onChange={(e) => setAmount(e.target.value)}
+                                    onChange={(e) => setUpdateAmount(e.target.value)}
+                                />
+                            </div>
+
+                            <div>
+                                <label className=' text-sm font-semibold lowercase text-gray-400'>Date time given</label>
+                                <input
+                                    value={updateDates}
+                                    onChange={(e) => setUpdateDates(e.target.value)}
+                                    // onChange={(e) => setDates(e.target.value)}
+                                    className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
+                                    type='datetime-local'
+                                />
+                            </div>
+
+
+
+
+                        </form>
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseEditAdvance}>cancel</Button>
+                    <Button onClick={handleEditAdvance}>update</Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* delete advance */}
+            <Dialog
+                open={openDeleteAdvance}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleCloseDeleteDialogue}
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle>{"delete the Advance"}</DialogTitle>
+                <DialogContent>
+                    <div className=' flex flex-col justify-center'>
+                        <p>Delete this advance permanently.</p>
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteDialogue}>cancel</Button>
+                    <Button onClick={handleDeleteAdvance}>delete</Button>
+                </DialogActions>
+            </Dialog>
+
         </div>
     );
 };

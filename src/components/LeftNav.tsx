@@ -58,6 +58,18 @@ const LeftNav: React.FC<LeftNavProps> = ({ isCollapsed }) => {
                         {!isCollapsed && <span className={`ml-4`}>Order <span className='bg-red-600 px-3 text-sm rounded-full text-white ms-10'>{orders}</span></span>}
                     </NavLink>
                 </li>
+                
+                <li className="mb-4">
+                    <NavLink
+                        to="/customers"
+                        className={({ isActive }) => 
+                            `flex items-center px-4 py-2 ${isActive ? 'bg-red-100 text-amber-700' : ''}`
+                        }
+                    >
+                        <LifebuoyIcon className="h-6 w-6" />
+                        {!isCollapsed && <span className={`ml-4`}>Customers</span>}
+                    </NavLink>
+                </li>
                 <li className="mb-4">
                     <NavLink
                         to="/analytics"
