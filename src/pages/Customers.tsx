@@ -17,7 +17,7 @@ const Customers = () => {
             <LeftNav isCollapsed={isCollapsed} />
             <div className="flex-1 bg-gray-100">
                 <TopNavBar isCollapsed={isCollapsed} toggleSidebar={handleToggleSidebar} />
-                <div className="p-6 max-h-[550px] overflow-y-auto">
+                <div className="p-6 max-h-[550px] overflow-y-auto flex justify-center">
                 <img src={constr} alt='coming-soon' loading='lazy'/>
                 </div>
             </div>
