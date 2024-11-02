@@ -260,7 +260,7 @@ const Stock = () => {
                 <tr className="text-gray-600">
                   <th className="px-6 py-4">Material</th>
                   <th className="px-6 py-4">Color</th>
-                  <th className="px-6 py-4">No Rolls</th>
+                  {/* <th className="px-6 py-4">No Rolls</th> */}
                   <th className="px-6 py-4">Total Size(m)</th>
                   <th className="px-6 py-4">Buying Price</th>
                   <th className="px-6 py-4">Action</th>
@@ -271,7 +271,7 @@ const Stock = () => {
                   <tr className="hover:bg-gray-50">
                     <td className="px-6 py-4">{stock.material.name}</td>
                     <td className="px-6 py-4">{stock.color.name}</td>
-                    <td className="px-6 py-4">{stock.num_of_rolls}</td>
+                    {/* <td className="px-6 py-4">{stock.num_of_rolls}</td> */}
                     <td className="px-6 py-4"><MetricFormatter total={stock.total} /></td>
                     <td className="px-6 py-4">{CurrencyFormatter({ amount: stock.buying_price, currencySymbol: 'Ksh', asString: true }) || ''}</td>
                     <td className="px-6 py-4">

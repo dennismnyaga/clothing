@@ -163,10 +163,24 @@ const singleEmployeeSlice = createSlice({
         );
       }
     },
+    updateSingleEmployeeTask(state, action: PayloadAction<Task>) {
+      if (state.singleEmployee) {
+        state.singleEmployee.tasks = state.singleEmployee.tasks.map((task) =>
+          task.id === action.payload.id ? action.payload : task
+        );
+      }
+    },
     removeSingleEmployeeAdvance(state, action: PayloadAction<number>) {
       if (state.singleEmployee) {
         state.singleEmployee.advances = state.singleEmployee.advances.filter(
           (advance) => advance.id !== action.payload
+        );
+      }
+    },
+    removeSingleEmployeeTask(state, action: PayloadAction<number>) {
+      if (state.singleEmployee) {
+        state.singleEmployee.tasks = state.singleEmployee.tasks.filter(
+          (task) => task.id !== action.payload
         );
       }
     },
@@ -226,9 +240,9 @@ const singleEmployeeSlice = createSlice({
       })
       .addCase(AddAnAdvance.fulfilled, (state, action: PayloadAction<Advances>) => {
         state.addAnAdvanceStatus = 'succeeded';
-        
+
         if (state.singleEmployee && state.singleEmployee.advances) {
-          
+
           state.singleEmployee.advances = [...state.singleEmployee.advances, action.payload];
         }
       })
@@ -244,7 +258,7 @@ export const getEmployeesStatus = (state: { singleEmployee: EmployeeState }) => 
 export const getEmployeesError = (state: { singleEmployee: EmployeeState }) => state.singleEmployee.error;
 
 
-export const { updateSingleEmployeeAdvance, removeSingleEmployeeAdvance  } = singleEmployeeSlice.actions;
-// export const { removeSingleEmployeeAdvance } = singleEmployeeSlice.actions;
+export const { updateSingleEmployeeAdvance, removeSingleEmployeeAdvance, updateSingleEmployeeTask, removeSingleEmployeeTask } = singleEmployeeSlice.actions;
+
 
 export default singleEmployeeSlice.reducer;

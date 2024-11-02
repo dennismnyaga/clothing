@@ -14,6 +14,7 @@ import { PencilSquareIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
 import { deleteAdvance, updateAdvances } from '../features/advances/advancesSlice';
+import { deleteRole, UpdateRoles } from '../features/roles/rolesSlice';
 
 
 
@@ -37,8 +38,13 @@ const EmployeeDetails = () => {
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [open, setOpen] = useState(false);
     const [amount, setAmount] = useState(null);
+    const [startDate, setStartDate] = useState('');
+    const [dueDate, setDueDate] = useState('');
+    const [estimatedAmount, setEstimatedAmount] = useState(null);
+    const [taskName, setTaskName] = useState(null);
     const [dates, setDates] = useState('');
     const [updateThisAdvance, setUpdateThisAdvance] = useState(null);
+    const [updateThisTask, setUpdateThisTask] = useState(null);
 
     const [updateAmount, setUpdateAmount] = useState(0);
     const [updateDates, setUpdateDates] = useState('');
@@ -46,10 +52,14 @@ const EmployeeDetails = () => {
 
     const [openDeleteAdvance, setOpenDeleteAdvance] = useState(false);
 
-
+    const [openTaskUpdate, setOpenTaskUpdate] = useState(false);
+    const [updateTaskId, setUpdateTaskId] = useState(0);
 
 
     const [openEditAdvance, setOpenEditAdvance] = useState(false);
+
+    const [openDeleteTask, setOpenDeleteTask] = useState(false);
+    const [taskId, setTaskId] = useState(0);
 
 
     const formatDate = (dateString) => {
@@ -58,6 +68,36 @@ const EmployeeDetails = () => {
         return formattedDate;
     };
 
+
+    const handleOpenUpdateTask = (task) => {
+        setOpenTaskUpdate(true);
+        setUpdateTaskId(task.id)
+        setTaskName(task.task_name)
+        setEstimatedAmount(task.estimated_pay)
+        setStartDate(task.start_date ? formatDate(task.start_date): '')
+        setDueDate(task.due_date_time ? formatDate(task.due_date_time): '')
+    }
+
+
+    const handleCloseUpdateTask = () => {
+        setOpenTaskUpdate(false);
+    }
+
+
+    const handleUpdateTask = () => {
+        const id = updateTaskId;
+        
+        const updatedData = {
+            ...updateThisTask,
+            task_name: taskName,
+            estimated_pay: estimatedAmount,
+            start_date: startDate,
+            due_date: dueDate,
+
+        };
+        dispatch(UpdateRoles({id, updatedData}));
+        setOpenTaskUpdate(false);
+    }
 
     const handleOpenEditAdvance = (advance) => {
         setAdvanceId(advance.id);
@@ -82,9 +122,24 @@ const EmployeeDetails = () => {
     }
 
     const handleDeleteAdvance = (advance) => {
-        dispatch(deleteAdvance({advanceId}))
+        dispatch(deleteAdvance({ advanceId }))
         setOpenDeleteAdvance(false)
     }
+// delete task
+    const handleOpenDeleteTask = (task) => {
+        setTaskId(task.id)
+        setOpenDeleteTask(true)
+    }
+
+    const handleCloseDeleteTask = () => {
+        setOpenDeleteTask(false);
+    }
+
+    const handleDeleteTask = () => {
+        dispatch(deleteRole({ taskId }))
+        setOpenDeleteTask(false)
+    }
+
 
     const handleEditAdvance = () => {
         // Perform save operation here (e.g., API call to save updates)
@@ -95,7 +150,6 @@ const EmployeeDetails = () => {
             date_issued: updateDates,
 
         };
-        console.log("Updated Advance:", updatedData);
         dispatch(updateAdvances({ id: advanceId, updatedData }))
         // Close the dialog after updating
         handleCloseEditAdvance();
@@ -289,23 +343,32 @@ const EmployeeDetails = () => {
                             {filteredTasks?.length > 0 ? (
                                 <div className="space-y-4">
                                     {filteredTasks?.slice().sort((a, b) => new Date(b.date_created) - new Date(a.date_created)).map((task) => (
-                                        <div key={task.id} className="p-4 border rounded-lg bg-gray-50">
-                                            <p><span className="font-semibold text-sm">Task Name:</span> {task?.task_name}</p>
-                                            <p><span className="font-semibold text-sm">Estimated Pay:</span> Ksh {task?.estimated_pay}</p>
-                                            {/* <p><span className="font-semibold text-sm">Start Date:</span> {new Date(task?.start_date).toLocaleString()}</p> */}
-                                            <p><span className="font-semibold text-sm">Start Date:</span> <DatesOps dateStr={task?.start_date} /></p>
-                                            <p><span className="font-semibold text-sm">Due Date:</span> <DatesOps dateStr={task?.due_date_time} /></p>
-                                            <p><span className="font-semibold text-sm">Completed:</span> {task?.completed ? "Yes" : "No"}</p>
+                                        <div key={task.id} className="p-4 border rounded-lg bg-gray-50 flex justify-between">
                                             <div>
-                                                <PencilSquareIcon className=' h-5 w-5' />
-                                            </div>
-                                            <form className=' flex items-center space-x-2'>
-                                                <label>Mark as complete</label>
-                                                <input type='checkbox' checked={task?.completed}
-                                                    onChange={() => handleChangeCompleted(task.id, task.completed)}
-                                                />
-                                            </form>
+                                                <p><span className="font-semibold text-sm">Task Name:</span> {task?.task_name}</p>
+                                                <p><span className="font-semibold text-sm">Estimated Pay:</span> Ksh {task?.estimated_pay}</p>
+                                                <p><span className="font-semibold text-sm">Start Date:</span> <DatesOps dateStr={task?.start_date} /></p>
+                                                <p><span className="font-semibold text-sm">Due Date:</span> <DatesOps dateStr={task?.due_date_time} /></p>
+                                                <p><span className="font-semibold text-sm">Completed:</span> {task?.completed ? "Yes" : "No"}</p>
 
+                                                <form className=' flex items-center space-x-2'>
+                                                    <label>Mark as complete</label>
+                                                    <input type='checkbox' checked={task?.completed}
+                                                        onChange={() => handleChangeCompleted(task.id, task.completed)}
+                                                    />
+                                                </form>
+                                            </div>
+
+
+                                            <div className='flex flex-col space-y-1'>
+                                                <div onClick={() => handleOpenUpdateTask(task)} className='text-white bg-blue-400 flex items-center cursor-pointer justify-center p-1 rounded-full'>
+                                                    <PencilSquareIcon className=' h-5 w-5' />
+                                                </div>
+                                                <div onClick={() => handleOpenDeleteTask(task)} className=' bg-blue-400 flex items-center cursor-pointer text-red-700 justify-center p-1 rounded-full'>
+                                                    <TrashIcon className=' h-5 w-5' />
+                                                </div>
+
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
@@ -384,7 +447,6 @@ const EmployeeDetails = () => {
                                     className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
                                     type='number'
                                     min={0}
-                                    // onChange={(e) => setAmount(e.target.value)}
                                     onChange={(e) => setUpdateAmount(e.target.value)}
                                 />
                             </div>
@@ -429,6 +491,91 @@ const EmployeeDetails = () => {
                 <DialogActions>
                     <Button onClick={handleCloseDeleteDialogue}>cancel</Button>
                     <Button onClick={handleDeleteAdvance}>delete</Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* delete task */}
+            <Dialog
+                open={openDeleteTask}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleCloseDeleteTask}
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle>{"delete the Advance"}</DialogTitle>
+                <DialogContent>
+                    <div className=' flex flex-col justify-center'>
+                        <p>Delete this task permanently.</p>
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteTask}>cancel</Button>
+                    <Button onClick={handleDeleteTask}>delete</Button>
+                </DialogActions>
+            </Dialog>
+
+
+            {/* update task */}
+            <Dialog
+                open={openTaskUpdate}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleCloseUpdateTask}
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle>{"update task"}</DialogTitle>
+                <DialogContent>
+                <div className=' flex flex-col justify-center'>
+                        <form>
+                            <div className=' mb-2'>
+                                <label className=' text-sm font-semibold lowercase text-gray-400'>Task Name</label>
+                                <input
+                                    className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
+                                    type='text'
+                                    value={taskName}
+                                    onChange={(e) => setTaskName(e.target.value)}
+                                />
+                            </div>
+                            <div className=' mb-2'>
+                                <label className=' text-sm font-semibold lowercase text-gray-400'>Estimated pay</label>
+                                <input
+                                    className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
+                                    type='number'
+                                    min={0}
+                                    value={estimatedAmount}
+                                    onChange={(e) => setEstimatedAmount(e.target.value)}
+                                />
+                            </div>
+                            <div className=' mb-2'>
+                                <label className=' text-sm font-semibold lowercase text-gray-400'>Start Date</label>
+                                <input
+                                    className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
+                                    type='datetime-local'
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                />
+                            </div>
+                            
+
+                            <div>
+                                <label className=' text-sm font-semibold lowercase text-gray-400'>Due date</label>
+                                <input
+                                value={dueDate}
+                                    onChange={(e) => setDueDate(e.target.value)}
+                                    className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
+                                    type='datetime-local'
+                                />
+                            </div>
+
+
+
+
+                        </form>
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseUpdateTask}>cancel</Button>
+                    <Button onClick={handleUpdateTask}>Update</Button>
                 </DialogActions>
             </Dialog>
 
