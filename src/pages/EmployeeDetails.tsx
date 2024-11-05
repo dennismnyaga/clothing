@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { AddAnAdvance, changeTaskCompletionStatus, fetchSingleEmployee, selectSingleEmployee } from '../features/employees/singleEmployeeSlice';
+import { AddAnAdvance, changeTaskCompletionStatus, fetchSingleEmployee, selectSingleEmployee, updateTaskCompletion } from '../features/employees/singleEmployeeSlice';
 import LeftNav from '../components/LeftNav';
 import TopNavBar from '../components/TopNavBar';
 import { toggleSidebar } from '../features/sidebar/sidebarSlice';
@@ -74,8 +74,8 @@ const EmployeeDetails = () => {
         setUpdateTaskId(task.id)
         setTaskName(task.task_name)
         setEstimatedAmount(task.estimated_pay)
-        setStartDate(task.start_date ? formatDate(task.start_date): '')
-        setDueDate(task.due_date_time ? formatDate(task.due_date_time): '')
+        setStartDate(task.start_date ? formatDate(task.start_date) : '')
+        setDueDate(task.due_date_time ? formatDate(task.due_date_time) : '')
     }
 
 
@@ -86,7 +86,7 @@ const EmployeeDetails = () => {
 
     const handleUpdateTask = () => {
         const id = updateTaskId;
-        
+
         const updatedData = {
             ...updateThisTask,
             task_name: taskName,
@@ -95,7 +95,7 @@ const EmployeeDetails = () => {
             due_date: dueDate,
 
         };
-        dispatch(UpdateRoles({id, updatedData}));
+        dispatch(UpdateRoles({ id, updatedData }));
         setOpenTaskUpdate(false);
     }
 
@@ -125,7 +125,7 @@ const EmployeeDetails = () => {
         dispatch(deleteAdvance({ advanceId }))
         setOpenDeleteAdvance(false)
     }
-// delete task
+    // delete task
     const handleOpenDeleteTask = (task) => {
         setTaskId(task.id)
         setOpenDeleteTask(true)
@@ -206,9 +206,9 @@ const EmployeeDetails = () => {
             );
         });
 
-        // const totalTaskPay = filteredTasks?.reduce((sum, task) => sum + parseFloat(task.estimated_pay), 0);
+       
         const totalTaskPay = filteredTasks?.reduce((sum, task) => {
-            return task.completed ? sum + parseFloat(task.estimated_pay) : sum;
+            return sum + (parseFloat(task.estimated_pay) * task.task_completed);
         }, 0);
 
         const totalAdvances = filteredAdvances?.reduce((sum, advance) => sum + parseFloat(advance.amount), 0);
@@ -230,6 +230,13 @@ const EmployeeDetails = () => {
         dispatch(changeTaskCompletionStatus({ taskId, completed: updatedStatus }));
     }
 
+
+    const handleQuantityClick = (taskId, quantityCompleted) => {
+        // Send the quantity completed to the backend
+        console.log('clicked task ', taskId)
+        dispatch(updateTaskCompletion({taskId, quantityCompleted}))
+        // dispatch(updateTaskCompletion(taskId, quantityCompleted))
+    };
 
 
 
@@ -351,12 +358,23 @@ const EmployeeDetails = () => {
                                                 <p><span className="font-semibold text-sm">Due Date:</span> <DatesOps dateStr={task?.due_date_time} /></p>
                                                 <p><span className="font-semibold text-sm">Completed:</span> {task?.completed ? "Yes" : "No"}</p>
 
-                                                <form className=' flex items-center space-x-2'>
+                                                {/* <form className=' flex items-center space-x-2'>
                                                     <label>Mark as complete</label>
                                                     <input type='checkbox' checked={task?.completed}
                                                         onChange={() => handleChangeCompleted(task.id, task.completed)}
                                                     />
-                                                </form>
+                                                </form> */}
+                                                <div className="flex space-x-2 flex-wrap space-y-2">
+                                                    {[...Array(task.quantity)].map((_, index) => (
+                                                        <button
+                                                            key={index}
+                                                            className={`px-2 py-1 rounded ${index < task.task_completed ? 'bg-green-500 text-white' : 'bg-gray-300'}`}
+                                                            onClick={() => handleQuantityClick(task.id, index + 1)}
+                                                        >
+                                                            {index + 1}
+                                                        </button>
+                                                    ))}
+                                                </div>
                                             </div>
 
 
@@ -525,7 +543,7 @@ const EmployeeDetails = () => {
             >
                 <DialogTitle>{"update task"}</DialogTitle>
                 <DialogContent>
-                <div className=' flex flex-col justify-center'>
+                    <div className=' flex flex-col justify-center'>
                         <form>
                             <div className=' mb-2'>
                                 <label className=' text-sm font-semibold lowercase text-gray-400'>Task Name</label>
@@ -555,12 +573,12 @@ const EmployeeDetails = () => {
                                     onChange={(e) => setStartDate(e.target.value)}
                                 />
                             </div>
-                            
+
 
                             <div>
                                 <label className=' text-sm font-semibold lowercase text-gray-400'>Due date</label>
                                 <input
-                                value={dueDate}
+                                    value={dueDate}
                                     onChange={(e) => setDueDate(e.target.value)}
                                     className=' w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700'
                                     type='datetime-local'

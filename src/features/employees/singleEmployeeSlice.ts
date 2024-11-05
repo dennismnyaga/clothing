@@ -64,6 +64,9 @@ interface EmployeeState {
 
   addAnAdvanceStatus: Status;
   addAnAdvanceError: string | null;
+
+  updateTaskCompletionStatus: Status;
+  updateTaskCompletionError: string | null | undefined;
 }
 
 // Initial state for EmployeeState
@@ -86,6 +89,9 @@ const initialState: EmployeeState = {
 
   addAnAdvanceStatus: 'idle',
   addAnAdvanceError: null,
+
+  updateTaskCompletionStatus: 'idle',
+  updateTaskCompletionError: null,
 };
 
 // Thunks
@@ -112,6 +118,25 @@ export const changeTaskCompletionStatus = createAsyncThunk<Tasks, ChangeTaskStat
     return response.data;
   }
 );
+
+export const updateTaskCompletion = createAsyncThunk<Tasks, ChangeTaskStatusParams>(
+  "singleEmployee/updateTaskCompletion",
+  async ({ taskId, quantityCompleted }) => {
+    const response = await axios.put<Tasks>(`${apiUrl}/quantity-complete/${taskId}/`, { task_completed: quantityCompleted });
+    return response.data;
+  }
+);
+
+// export const updateTaskCompletion = async (taskId, quantityCompleted) => {
+//   try {
+//       const response = await axios.put(`${apiUrl}/quantity-complete/${taskId}/`, {task_completed: quantityCompleted,});
+//       console.log("Task updated:", response.data);
+//       return response.data
+//       // Update the UI or refetch tasks as needed
+//   } catch (error) {
+//       console.error("Error updating task:", error);
+//   }
+// };
 
 // Add an advance
 interface AdvanceFormData {
@@ -235,6 +260,22 @@ const singleEmployeeSlice = createSlice({
       .addCase(changeTaskCompletionStatus.rejected, (state, action) => {
         state.changeTaskError = action.error.message ?? null;
       })
+
+      .addCase(updateTaskCompletion.pending, (state) => {
+        state.updateTaskCompletionStatus = 'loading';
+      })
+      .addCase(updateTaskCompletion.fulfilled, (state, action: PayloadAction<Tasks>) => {
+        state.updateTaskCompletionStatus = 'succeeded';
+        if (state.singleEmployee && state.singleEmployee.tasks) {
+          state.singleEmployee.tasks = state.singleEmployee.tasks.map((task) =>
+            task.id === action.payload.id ? action.payload : task
+          );
+        }
+      })
+      .addCase(updateTaskCompletion.rejected, (state, action) => {
+        state.updateTaskCompletionError = action.error.message ?? null;
+      })
+
       .addCase(AddAnAdvance.pending, (state) => {
         state.addAnAdvanceStatus = 'loading';
       })
