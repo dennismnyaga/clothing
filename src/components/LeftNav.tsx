@@ -33,7 +33,7 @@ const LeftNav: React.FC<LeftNavProps> = ({ isCollapsed }) => {
                         }
                     >
                         <ShoppingBagIcon className="h-6 w-6" />
-                        {!isCollapsed && <span className={`ml-4`}>Dashboard</span>}
+                        {!isCollapsed && <span className={`ml-4`}>Stock</span>}
                     </NavLink>
                 </li>
                 <li className="mb-4">
@@ -44,7 +44,7 @@ const LeftNav: React.FC<LeftNavProps> = ({ isCollapsed }) => {
                         }
                     >
                         <ArchiveBoxIcon className="h-6 w-6" />
-                        {!isCollapsed && <span className={`ml-4`}>Stock</span>}
+                        {!isCollapsed && <span className={`ml-4`}>Store</span>}
                     </NavLink>
                 </li>
                 <li className="mb-4">

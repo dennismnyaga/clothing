@@ -261,7 +261,7 @@ const Stock = () => {
                   <th className="px-6 py-4">Material</th>
                   <th className="px-6 py-4">Color</th>
                   {/* <th className="px-6 py-4">No Rolls</th> */}
-                  <th className="px-6 py-4">Total Size(m)</th>
+                  <th className="px-6 py-4">Total Size(inches)</th>
                   <th className="px-6 py-4">Buying Price</th>
                   <th className="px-6 py-4">Action</th>
                 </tr>

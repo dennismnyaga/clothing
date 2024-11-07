@@ -199,7 +199,11 @@ const Roles = () => {
       start_date: startDate,
       due_date_time: dueDate,
       assigned_to: assignTo,
-      quantity: taskQuantity
+      quantity: taskQuantity,
+      materials: materials.map((material) => ({
+        material_to_use: material.materialId,      // Material ID
+        material_size: material.materialSize        // Material size
+      })),
     }
     dispatch(addRoles(formData))
   }
@@ -462,6 +466,47 @@ const Roles = () => {
                 />
               </div>
 
+              {/* start Task material */}
+              <div className='bg-orange-100 !px-1 rounded-md py-1'>
+                <div>
+                  <label className="text-sm font-semibold lowercase text-gray-400">How many materials to use</label>
+                  <input
+                    className="w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700"
+                    type="number"
+                    min={0}
+                    onChange={handleMaterialCountChange}
+                  />
+                </div>
+
+                {materials.map((_, index) => (
+                  <div key={index} className="mb-4">
+                    <div>
+                      <label className="text-sm font-semibold lowercase text-gray-400">Material #{index + 1}</label>
+                      <select
+                        onChange={(e) => handleMaterialChange(index, "materialId", parseInt(e.target.value))}
+                        className="w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700"
+                      >
+                        <option value="">---Select Material---</option>
+                        {all_material.map((material) => (
+                          <option key={material.id} value={material.id}>{material.material.name} {material.color.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-semibold lowercase text-gray-400">Material size #{index + 1}</label>
+                      <input
+                        type="number"
+                        min={0}
+                        className="w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700"
+                        onChange={(e) => handleMaterialChange(index, "materialSize", parseFloat(e.target.value))}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* end Task material */}
+
               <div>
                 <label className=' text-sm font-semibold lowercase text-gray-400'>Task Payment</label>
                 <input
@@ -539,6 +584,47 @@ const Roles = () => {
                   onChange={(e) => setTaskName(e.target.value)}
                 />
               </div>
+
+              {/* add task material */}
+              <div className='bg-orange-100 !px-1 rounded-md py-1'>
+                <div>
+                  <label className="text-sm font-semibold lowercase text-gray-400">How many materials to use</label>
+                  <input
+                    className="w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700"
+                    type="number"
+                    min={0}
+                    onChange={handleMaterialCountChange}
+                  />
+                </div>
+
+                {materials.map((_, index) => (
+                  <div key={index} className="mb-4">
+                    <div>
+                      <label className="text-sm font-semibold lowercase text-gray-400">Material #{index + 1}</label>
+                      <select
+                        onChange={(e) => handleMaterialChange(index, "materialId", parseInt(e.target.value))}
+                        className="w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700"
+                      >
+                        <option value="">---Select Material---</option>
+                        {all_material.map((material) => (
+                          <option key={material.id} value={material.id}>{material.material.name} {material.color.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-semibold lowercase text-gray-400">Material size #{index + 1}</label>
+                      <input
+                        type="number"
+                        min={0}
+                        className="w-full outline-none border border-gray-500 rounded-md px-2 py-0.5 focus:border-pink-700"
+                        onChange={(e) => handleMaterialChange(index, "materialSize", parseFloat(e.target.value))}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* end task material */}
 
               <div>
                 <label className=' text-sm font-semibold lowercase text-gray-400'>Task Payment Per Quantity</label>
