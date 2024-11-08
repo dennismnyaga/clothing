@@ -198,7 +198,7 @@ const Stock = () => {
   const handleUpdateStocks = (e: any) => {
     const updateData = {
       num_of_rolls: updateStock?.num_of_rolls, // Capture from the state
-      size: updateStock?.total,                // Use the total size field
+      total: updateStock?.total,                // Use the total size field
       material: {
         name: updateStock?.material?.name
       },   // Capture the material name
@@ -414,13 +414,13 @@ const Stock = () => {
             </DialogContent>
             <DialogActions>
               <button
-                className='bg-green-500 px-2 py-0.5 text-white font-bold text-sm rounded-md'
+                className='bg-red-500 px-2 py-0.5 text-white font-bold text-sm rounded-md'
                 onClick={handleCloseUpdate}
               >
                 Cancel
               </button>
               <button
-                className='bg-red-500 px-2 py-0.5 text-white font-bold text-sm rounded-md'
+                className='bg-green-500 px-2 py-0.5 text-white font-bold text-sm rounded-md'
                 onClick={handleUpdateStocks}
                 autoFocus
               >
@@ -481,7 +481,7 @@ const Stock = () => {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">
-              {"Add a new product"}
+              {"Add a new product to store"}
             </DialogTitle>
             <form onSubmit={handleAddStock}>
               <DialogContent className=' '>

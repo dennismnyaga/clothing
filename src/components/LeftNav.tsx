@@ -10,7 +10,9 @@ interface LeftNavProps {
 }
 
 const LeftNav: React.FC<LeftNavProps> = ({ isCollapsed }) => {
+    
     const orders = useAppSelector(getOrderCount);
+
     return (
         <nav className={`  bg-white text-black transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-52'} h-screen`}>
             {/* Logo and Name Container with Bottom Border */}

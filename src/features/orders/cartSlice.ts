@@ -136,6 +136,9 @@ const cartSlice = createSlice({
       .addCase(fetchCart.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.cart = action.payload;
+        // console.log('cart logs ', action.payload)
+        
+        
         state.orderCount = action.payload.length;
       })
       .addCase(fetchCart.rejected, (state, action) => {

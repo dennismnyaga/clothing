@@ -12,6 +12,7 @@ import materialSlice from "../features/material/materialSlice";
 import employeesSlice from "../features/employees/employeesSlice";
 import singleEmployeeSlice from "../features/employees/singleEmployeeSlice";
 import advancesSlice from "../features/advances/advancesSlice";
+import customersSlice from "../features/customer/customersSlice"
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
@@ -28,6 +29,7 @@ const rootReducer = combineSlices(
     employee: employeesSlice,
     singleEmployee: singleEmployeeSlice,
     advance: advancesSlice,
+    customer: customersSlice,
   }
 )
 // Infer the `RootState` type from the root reducer
