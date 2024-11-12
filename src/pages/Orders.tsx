@@ -215,7 +215,12 @@ const Orders = () => {
                                     <tr key={order.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleOrderClick(order)}>
                                         <td className="px-6 py-4">{order.product.product.name}</td>
                                         <td className="px-6 py-4">{order.product.material.name}</td>
-                                        <td className="px-6 py-4">{order.product.size.size}</td>
+                                        {/* <td className="px-6 py-4">{order.product.size.size}</td> */}
+                                        <td className="px-6 py-4">
+                                        {order.product.size.size && order.product.size.alphabetic_size
+                            ? `${order.product.size.size} / ${order.product.size.alphabetic_size}`
+                            : order.product.size.size || order.product.size.alphabetic_size || "N/A"}
+                                        </td>
                                         <td className="px-6 py-4">{order.delivered ? <div className=' bg-green-500 px-1 rounded-lg text-white font-bold py-0.5 text-center'>Delivered</div> : <div className='bg-red-500 px-1 rounded-lg text-white font-bold py-0.5 text-center'>Pending</div>}</td>
                                         <td className="px-6 py-4"><DatesOnly dateStr={order.due_date} /></td>
                                         <td className="px-6 py-4">{order.to_be_delivered_to}</td>
@@ -321,7 +326,12 @@ const Orders = () => {
                                 </p>
                                 <p className=' flex justify-between mt-2 mb-1'>
                                     <span className='font-semibold text-xs'>Size:</span>
-                                    <span className=' text-xs text-gray-800 font-normal'>{selectedOrder.product.size.size}</span>
+                                    {/* <span className=' text-xs text-gray-800 font-normal'>{selectedOrder.product.size.size}</span> */}
+                                    <span className=' text-xs text-gray-800 font-normal'>
+                                    {selectedOrder.product.size.size && selectedOrder.product.size.alphabetic_size
+                            ? `${selectedOrder.product.size.size} / ${selectedOrder.product.size.alphabetic_size}`
+                            : selectedOrder.product.size.size || selectedOrder.product.size.alphabetic_size || "N/A"}
+                                    </span>
                                 </p>
                                 <p className=' flex justify-between mt-2 mb-1'>
                                     <span className='font-semibold text-xs'>Color:</span>
