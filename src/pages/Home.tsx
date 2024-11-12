@@ -27,6 +27,7 @@ const Home = () => {
   const [material, setMaterial] = useState('')
   const [color, setColor] = useState('')
   const [size, setSize] = useState('');
+  const [alphabeticalSize, setAlphabeticalSize] = useState('');
   const [price, setPrice] = useState('');
 
   const [isPanelOpenEdit, setIsPanelOpenEdit] = useState(false);
@@ -592,7 +593,10 @@ const Home = () => {
         product: selectedProduct.id,  // Get the selected product ID
         material: { name: material }, // Assuming material input is a string
         color: { name: color },       // Assuming color input is a string
-        size: { size: size },         // Assuming size input is a string
+        size: {
+          size: size,
+          alphabetic_size: alphabeticalSize
+        },
         quantity: parseInt(quantity), // Convert quantity to number
         price: parseFloat(price),     // Convert price to number
       }));
@@ -602,6 +606,7 @@ const Home = () => {
       setMaterial('');
       setColor('');
       setSize('');
+      setAlphabeticalSize('')
       setQuantity('');
       setPrice('');
     }
@@ -698,7 +703,13 @@ const Home = () => {
                         {/* Ensure that you're rendering string or number values, not objects */}
                         <td className="px-3 py-4 ">{variation.material.name}</td> {/* Accessing material.name */}
                         <td className="px-3 py-4 ">{variation.color.name}</td>    {/* Accessing color.name */}
-                        <td className="px-3 py-4 ">{variation.size.size}</td>     {/* Accessing size.size */}
+                        <td className="px-3 py-4">
+                          {/* Check if both size and alphabetic_size are present */}
+                          {variation.size.size && variation.size.alphabetic_size
+                            ? `${variation.size.size} / ${variation.size.alphabetic_size}`
+                            : variation.size.size || variation.size.alphabetic_size || "N/A"}
+                        </td>
+                        {/* Accessing size.size */}
                         <td className="px-3 py-4 whitespace-nowrap ">
                           {CurrencyFormatter({ amount: variation.price, currencySymbol: 'Ksh', asString: true }) || ''}
                         </td>
@@ -998,12 +1009,22 @@ const Home = () => {
                             />
                           </div>
                           <div className=' flex flex-col mb-2'>
-                            <label className=' font-light text-sm'>Size</label>
+                            <label className=' font-light text-sm'>Numerical Size</label>
+                            <input
+                              className='outline-none border border-gray-300 rounded-md px-2 py-1 font-semibold text-sm focus:border-pink-400 shadow'
+                              type='number'
+                              min={0}
+                              value={size}
+                              onChange={(e) => setSize(e.target.value)}
+                            />
+                          </div>
+                          <div className=' flex flex-col mb-2'>
+                            <label className=' font-light text-sm'>Alphatetical size Size</label>
                             <input
                               className='outline-none border border-gray-300 rounded-md px-2 py-1 font-semibold text-sm focus:border-pink-400 shadow'
                               type='text'
-                              value={size}
-                              onChange={(e) => setSize(e.target.value)}
+                              value={alphabeticalSize}
+                              onChange={(e) => setAlphabeticalSize(e.target.value)}
                             />
                           </div>
                           <div className=' flex flex-col mb-2'>
