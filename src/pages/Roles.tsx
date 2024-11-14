@@ -302,7 +302,7 @@ const Roles = () => {
             {/* adding the project */}
             <div className=' bg-gray-200 p-3 rounded-lg px-3'>
               <div className=' flex justify-between items-center '>
-                <h5 className=' font-semibold text-sm'>Assigned tasks</h5>
+                <h5 className=' font-semibold text-sm'>Assigned Projects</h5>
                 <div className=' flex space-x-4'>
                   <div className=' flex items-center space-x-2 bg-white rounded-lg px-2 py-0.5 cursor-pointer'>
                     <p className=' text-xs font-semibold lowercase'>Nearest Due date</p>
