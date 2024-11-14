@@ -10,6 +10,8 @@ import { addEmployee, deleteThisEmployee, fetchEmployees, selectAllEmployee, upd
 import { useNavigate } from 'react-router-dom';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Slide } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
+import CurrencyFormatter from '../components/CurrencyFormatter';
+import FormattedAmount from '../components/FormattedAmount';
 
 
 
@@ -109,28 +111,37 @@ const Employees = () => {
 
     //     return totalEstimatedPay.toFixed(2); // Return formatted total
     // };
-    const calculateCurrentMonthEstimatedPay = (tasks) => {
-        if (!tasks || tasks.length === 0) {
-            return "0.00"; // Return zero if tasks is undefined or empty
-        }
 
-        const currentDate = new Date();
-        const currentMonth = currentDate.getMonth();
-        const currentYear = currentDate.getFullYear();
+    function calculateCurrentMonthEstimatedPay(tasks) {
+        return tasks
+            .reduce((total, task) => {
+                return total + (parseFloat(task.estimated_pay) * task.task_completed);
+            }, 0)
+            .toFixed(2); // Format to two decimal places
+    }
 
-        // Filter tasks for the current month and year
-        const currentMonthTasks = tasks.filter((task) => {
-            const taskDate = new Date(task.start_date);
-            return taskDate.getMonth() === currentMonth && taskDate.getFullYear() === currentYear;
-        });
+    // const calculateCurrentMonthEstimatedPay = (tasks) => {
+    //     if (!tasks || tasks.length === 0) {
+    //         return "0.00"; // Return zero if tasks is undefined or empty
+    //     }
 
-        // Sum the estimated_pay only for completed tasks in the filtered list
-        const totalEstimatedPay = currentMonthTasks.reduce((sum, task) => {
-            return task.completed ? sum + parseFloat(task.estimated_pay) : sum;
-        }, 0);
+    //     const currentDate = new Date();
+    //     const currentMonth = currentDate.getMonth();
+    //     const currentYear = currentDate.getFullYear();
 
-        return totalEstimatedPay.toFixed(2); // Return formatted total
-    };
+    //     // Filter tasks for the current month and year
+    //     const currentMonthTasks = tasks.filter((task) => {
+    //         const taskDate = new Date(task.start_date);
+    //         return taskDate.getMonth() === currentMonth && taskDate.getFullYear() === currentYear;
+    //     });
+
+    //     // Sum the estimated_pay only for completed tasks in the filtered list
+    //     const totalEstimatedPay = currentMonthTasks.reduce((sum, task) => {
+    //         return task.completed ? sum + parseFloat(task.estimated_pay) : sum;
+    //     }, 0);
+
+    //     return totalEstimatedPay.toFixed(2); // Return formatted total
+    // };
 
 
 
@@ -306,9 +317,9 @@ const Employees = () => {
                                             <td className="px-4 py-4 whitespace-nowrap">{employee.first_name} {employee.last_name}</td>
                                             <td className="px-4 py-4 whitespace-nowrap">+254 {employee.phone} </td>
                                             <td className="px-4 py-4 text-center">{employee?.tasks?.length}</td>
-                                            <td className="px-4 py-4 text-center">Ksh {taskEarnings}</td>
-                                            <td className="px-4 py-4">Ksh. {totalAdvances}</td>
-                                            <td className="px-4 py-4">Ksh. {totalPaymentDue}</td>
+                                            <td className="px-4 py-4 text-center"><FormattedAmount amount={taskEarnings} /></td>
+                                            <td className="px-4 py-4"><FormattedAmount amount={totalAdvances} /> </td>
+                                            <td className="px-4 py-4"><FormattedAmount amount={totalPaymentDue} /></td>
                                             <td className="px-4 py-4 text-center">
                                                 <div className=' flex space-x-1'>
                                                     <button

@@ -118,14 +118,14 @@ const Customers = () => {
                                     </TableRow>
                                   </TableHead>
                                   <TableBody>
-                                    {customer?.carts?.map((cart) => (
+                                    {customer.carts.map((cart) => (
                                       <TableRow key={cart.id}>
                                         <TableCell component="th" scope="row">
-                                          {new Date(cart?.date_added).toLocaleDateString()}
+                                          {new Date(cart.date).toLocaleDateString()}
                                         </TableCell>
-                                        <TableCell>{cart.product.product.name}</TableCell>
+                                        <TableCell>{cart.product.product.name} {cart.product.material.name} {cart.product.color.name} {cart.product.size.size}</TableCell>
                                         <TableCell align="right">{cart.quantity}</TableCell>
-                                        <TableCell align="right">{cart.price}</TableCell>
+                                        <TableCell align="right">{cart.mode_of_payment}</TableCell>
                                       </TableRow>
                                     ))}
                                   </TableBody>
