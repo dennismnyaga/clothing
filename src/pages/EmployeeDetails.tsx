@@ -15,6 +15,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { TransitionProps } from '@mui/material/transitions';
 import { deleteAdvance, updateAdvances } from '../features/advances/advancesSlice';
 import { deleteRole, UpdateRoles } from '../features/roles/rolesSlice';
+import FormattedAmount from '../components/FormattedAmount';
 
 
 
@@ -303,9 +304,9 @@ const EmployeeDetails = () => {
                             {/* Display Monthly Totals */}
                             <div className="bg-white shadow-lg rounded-lg p-6 space-y-4">
                                 <h2 className=" text-base font-bold text-gray-700">Financial Summary for {months[selectedMonth]} {selectedYear}</h2>
-                                <p><span className="font-semibold text-sm">Total Task Pay:</span> Ksh {totalTaskPay}</p>
-                                <p><span className="font-semibold text-sm">Total Advances:</span> Ksh {totalAdvances}</p>
-                                <p><span className="font-semibold text-sm">Net Pay (Task Pay - Advances):</span> Ksh {netPay}</p>
+                                <p><span className="font-semibold text-sm">Total Task Pay:</span><FormattedAmount amount={totalTaskPay} /></p>
+                                <p><span className="font-semibold text-sm">Total Advances:</span><FormattedAmount amount={totalAdvances} /></p>
+                                <p><span className="font-semibold text-sm">Net Pay (Task Pay - Advances):</span><FormattedAmount amount={netPay} /></p>
                             </div>
 
                             {/* Display Filtered Advances */}
