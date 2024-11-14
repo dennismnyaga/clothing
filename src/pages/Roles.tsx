@@ -551,7 +551,7 @@ const Roles = () => {
               </div>
 
               {/* add task material */}
-              <div className='bg-orange-100 !px-1 rounded-md py-1'>
+              {/* <div className='bg-orange-100 !px-1 rounded-md py-1'>
                 <div>
                   <label className="text-sm font-semibold lowercase text-gray-400">How many materials to use</label>
                   <input
@@ -588,7 +588,7 @@ const Roles = () => {
                     </div>
                   </div>
                 ))}
-              </div>
+              </div> */}
               {/* end task material */}
 
               <div>
