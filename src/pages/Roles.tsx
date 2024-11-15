@@ -152,7 +152,7 @@ const Roles = () => {
     ? all_roles.filter((role) => role.project.id === selectedProject.id)
     : all_roles;
 
-    console.log('filetered role data, ', filteredRoles)
+    // console.log('filetered role data, ', filteredRoles)
   useEffect(() => {
     dispatch(fetchRoles())
   }, [dispatch])

@@ -111,7 +111,7 @@ export const deleteRole = createAsyncThunk(
 )
 
 
-const productsSlice = createSlice({
+const rolesSlice = createSlice({
   name: "roles",
   initialState,
   reducers: {
@@ -171,4 +171,4 @@ export const selectAllRoles = (state: { roles: RolesState }) => state.roles.role
 export const getProductsStatus = (state: { roles: RolesState }) => state.roles.status;
 export const getProductsError = (state: { roles: RolesState }) => state.roles.error;
 
-export default productsSlice.reducer;
+export default rolesSlice.reducer;

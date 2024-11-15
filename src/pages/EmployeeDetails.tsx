@@ -351,7 +351,15 @@ const EmployeeDetails = () => {
                             {filteredTasks?.length > 0 ? (
                                 <div className="space-y-4">
                                     {filteredTasks?.slice().sort((a, b) => new Date(b.date_created) - new Date(a.date_created)).map((task) => (
-                                        <div key={task.id} className="p-4 border rounded-lg bg-gray-50 flex justify-between">
+                                        <div  key={task.id} className='p-4 border rounded-lg bg-gray-50'>
+                                            <div className=' text-center flex items-center justify-center  underline'>
+                                                <p className=' flex space-x-3'>
+                                                    <span className='font-bold'>Project name:</span>
+                                                    <span>{task?.project.name}</span>
+                                                </p>
+                                            </div>
+                                        <div className=" flex justify-between">
+                                            
                                             <div>
                                                 <p><span className="font-semibold text-sm">Task Name:</span> {task?.task_name}</p>
                                                 <p><span className="font-semibold text-sm">Estimated Pay:</span> Ksh {task?.estimated_pay}</p>
@@ -388,6 +396,7 @@ const EmployeeDetails = () => {
                                                 </div>
 
                                             </div>
+                                        </div>
                                         </div>
                                     ))}
                                 </div>
