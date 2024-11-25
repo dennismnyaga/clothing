@@ -995,6 +995,7 @@ const Home = () => {
                               className='outline-none border border-gray-300 rounded-md px-2 py-1 font-semibold text-sm focus:border-pink-400 shadow'
                               type='text'
                               value={material}
+                              required
                               onChange={(e) => setMaterial(e.target.value)}
                             />
                           </div>
@@ -1005,6 +1006,7 @@ const Home = () => {
                               className='outline-none border border-gray-300 rounded-md px-2 py-1 font-semibold text-sm focus:border-pink-400 shadow'
                               type='text'
                               value={color}
+                              required
                               onChange={(e) => setColor(e.target.value)}
                             />
                           </div>
@@ -1032,6 +1034,7 @@ const Home = () => {
                             <input
                               className='outline-none border border-gray-300 rounded-md px-2 py-1 font-semibold text-sm focus:border-pink-400 shadow'
                               type='text'
+                              required
                               value={quantity}
                               onChange={(e) => setQuantity(e.target.value)}
                             />
@@ -1041,6 +1044,7 @@ const Home = () => {
                             <input
                               className='outline-none border border-gray-300 rounded-md px-2 py-1 font-semibold text-sm focus:border-pink-400 shadow'
                               type='text'
+                              required
                               value={price}
                               onChange={(e) => setPrice(e.target.value)}
                             />
