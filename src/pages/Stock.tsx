@@ -20,6 +20,7 @@ import { CircularProgress } from '@mui/material';
 const Stock = () => {
   const dispatch = useAppDispatch();
   const isCollapsed = useAppSelector((state) => state.sidebar.isCollapsed);
+  const [searchTerm, setSearchTerm] = useState<string>("")
 
   const all_stock = useAppSelector(selectAllStocks);
   const [open, setOpen] = useState(false);
@@ -94,7 +95,7 @@ const Stock = () => {
     setOpen(true);
   };
 
-  
+
 
   const handleClose = () => {
     setOpen(false);
@@ -209,17 +210,22 @@ const Stock = () => {
     }
     const stockId = updateStock?.id;
 
-    dispatch(updatingStock({stockId, updateData}))
+    dispatch(updatingStock({ stockId, updateData }))
     handleUpdateStocksSuccess()
   }
 
   const handleDeletStock = () => {
     const stockId = deleteStock?.id
 
-    dispatch(deleteStocks({stockId}))
+    dispatch(deleteStocks({ stockId }))
 
     setOpen(false);
   }
+
+
+  const filteredMaterials = all_stock.filter(stock =>
+    stock.material.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="flex h-screen">
@@ -244,6 +250,8 @@ const Stock = () => {
               type="text"
               placeholder="Search stock..."
               className="border bg-white rounded-xl pl-10 pr-4 py-2 w-full focus:outline-none focus:border-purple-800"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
 
             <div onClick={handleClickOpenAddAnotherStock} className=' border rounded-lg px-2 bg-white cursor-pointer py-2 ms-5 flex items-center gap-2 text-orange-600'>
@@ -267,7 +275,7 @@ const Stock = () => {
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-gray-200">
-                {all_stock.map((stock) => (
+                {filteredMaterials.map((stock) => (
                   <tr className="hover:bg-gray-50">
                     <td className="px-6 py-4">{stock.material.name}</td>
                     <td className="px-6 py-4">{stock.color.name}</td>

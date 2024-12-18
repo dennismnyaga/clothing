@@ -29,6 +29,7 @@ const Home = () => {
   const [size, setSize] = useState('');
   const [alphabeticalSize, setAlphabeticalSize] = useState('');
   const [price, setPrice] = useState('');
+  const [searchTerm, setSearchTerm] = useState<string>("")
 
   const [isPanelOpenEdit, setIsPanelOpenEdit] = useState(false);
   const [selectedProductEdit, setSelectedProductEdit] = useState(null);
@@ -387,27 +388,8 @@ const Home = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (addingProductStatus === 'succeeded') {
-  //     setNewProductName(''); // Clear the input field
-  //     setOpenAddProduct(false)
-  //     setSuccessMessage('Successfully added the product!')
-  //     setShowSuccessMessage(true);
 
-  //     const timer = setTimeout(() => {
-  //       setShowSuccessMessage(false);
-  //       setSuccessMessage('')
-  //     }, 3000);
-
-  //     // Cleanup the timer when the component unmounts or before re-running the effect
-  //     return () => clearTimeout(timer);
-  //   }
-
-  // }, [addingProductStatus]);
-
-
-  //  handling adding new product logic End
-
+ 
 
   //  Updating new product logic Start
   const updateProductStatus = useAppSelector((state) => state.products.updateProductStatus)
@@ -618,6 +600,12 @@ const Home = () => {
     setSelectedCompleteSale(value);
   };
 
+
+
+  const filteredProducts = all_products.filter(product =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="flex h-screen">
       {/* Left Sidebar */}
@@ -637,6 +625,8 @@ const Home = () => {
               type="text"
               placeholder="Search product..."
               className="border bg-white rounded-xl pl-10 pr-4 py-2 w-full focus:outline-none focus:border-purple-800"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
 
             <div onClick={handleOpenAddProduct} className=' border rounded-lg px-2 bg-white cursor-pointer py-2 ms-5 flex items-center gap-2 text-orange-600'>
@@ -669,7 +659,7 @@ const Home = () => {
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-gray-200">
-                {all_products.map((product) => (
+                {filteredProducts.map((product) => (
                   Array.isArray(product.prod) && product.prod.length > 0 ? (
                     product.prod.map((variation, index) => (
                       <tr key={`${product.name}-${index}`} className="hover:bg-gray-100">
